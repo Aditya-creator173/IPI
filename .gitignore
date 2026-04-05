@@ -1,0 +1,43 @@
+# Python environments
+.venv/
+venv/
+env/
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.secrets
+secrets/
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Notebook and editor noise
+.ipynb_checkpoints/
+.vscode/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Benchmark outputs and local research artifacts
+results.csv
+results/*.csv
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz

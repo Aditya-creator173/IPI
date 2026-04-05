@@ -1,0 +1,7 @@
+groq
+google-genai
+mistralai
+openai
+pandas
+matplotlib
+seaborn
