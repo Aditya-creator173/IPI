@@ -34,12 +34,7 @@ The current runner script in this repository evaluates four defense modes:
 
 ## Key Findings
 
-Fill this section after running the benchmark on your final model set.
-
-- Baseline attack success rate ranged from X% (most resistant model) to Y% (least resistant model).
-- Spotlighting reduced attack success by Z% on average.
-- Reasoning-oriented models showed a different vulnerability profile from standard instruction-tuned models.
-- Foreign-language and obfuscated injections bypassed input filtering in N% of matched cases.
+Work-in-Progress
 
 ## Repository Structure
 
@@ -161,5 +156,3 @@ Example placeholder:
 ## Author
 
 Aditya L
-B.Tech Computer Science
-SRM Institute of Science and Technology, Chennai
