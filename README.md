@@ -41,7 +41,10 @@ Work-in-Progress
 - [README.md](README.md): project overview, setup, and reproducibility notes
 - [benchmark.json](benchmark.json): 100 attack scenarios with success criteria
 - [run_benchmark.py](run_benchmark.py): evaluation script
-- [results/results.csv](results/results.csv): experimental output table
+- [benchmark_scripts/](benchmark_scripts/): flat per-model runners plus shared helpers (`_core.py`, `_google.py`, `_openrouter.py`)
+- [merge_results.py](merge_results.py): merges per-model CSV outputs into one final file
+- [results/csv/](results/csv/): per-model CSV output files
+- [results/jsonl/](results/jsonl/): per-model JSONL output files
 - [analysis/analysis.ipynb](analysis/analysis.ipynb): visualization and analysis notebook
 - [paper/draft.pdf](paper/draft.pdf): working paper draft
 - [requirements.txt](requirements.txt): Python dependencies
@@ -132,15 +135,18 @@ python run_benchmark.py
 
 ## Output Files
 
-By default, the current runner writes to a root-level file named results.csv.
+Model scripts write outputs directly to:
 
-To keep the repository structure clean, move the generated file after each run:
+- [results/csv/](results/csv/) as per-model CSV files
+- [results/jsonl/](results/jsonl/) as per-model JSONL files
 
-```powershell
-Move-Item -LiteralPath .\results.csv -Destination .\results\results.csv -Force
+To merge all per-model CSV files into one final table:
+
+```bash
+python merge_results.py
 ```
 
-If you prefer, you can update [run_benchmark.py](run_benchmark.py) so it writes directly to [results/results.csv](results/results.csv).
+This produces [results/results_final.csv](results/results_final.csv).
 
 ## Reproducibility Checklist
 
@@ -148,7 +154,7 @@ If you prefer, you can update [run_benchmark.py](run_benchmark.py) so it writes 
 - document model names and API versions used
 - log run date and hardware/network context
 - keep the exact [benchmark.json](benchmark.json) used for each reported result
-- keep raw [results/results.csv](results/results.csv) for auditability
+- keep raw per-model files in [results/csv/](results/csv/) and [results/jsonl/](results/jsonl/) for auditability
 
 ## Dataset
 

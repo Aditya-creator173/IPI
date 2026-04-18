@@ -36,6 +36,11 @@ Thumbs.db
 # Benchmark outputs and local research artifacts
 results.csv
 results/*.csv
+results/jsonl/
+results/csv/
+results/results_final.csv
+!results/jsonl/.gitkeep
+!results/csv/.gitkeep
 paper/*.aux
 paper/*.log
 paper/*.out
