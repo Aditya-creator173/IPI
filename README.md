@@ -96,6 +96,26 @@ export GROQ_API_KEY="your_groq_key"
 export GOOGLE_API_KEY="your_google_key"
 ```
 
+If you also run scripts under [benchmark_scripts/](benchmark_scripts/), you may need:
+
+- `ANTHROPIC_API_KEY`
+- `OPENROUTER_API_KEY`
+- `GITHUB_TOKEN`
+
+## Security Before Open-Sourcing
+
+Use this checklist before pushing to GitHub:
+
+1. Confirm only template config is committed: [.env.example](.env.example) is tracked, but real `.env` is not.
+2. Run a quick tracked-file secret scan:
+
+```bash
+git grep -nE '(api[_-]?key|apikey|secret|token|password)[[:space:]]*[:=][[:space:]]*["\x27][^"\x27]{8,}["\x27]|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AIza[0-9A-Za-z_-]{20,}|-----BEGIN [A-Z ]+PRIVATE KEY-----' -- .
+```
+
+3. If anything looks like a real credential, remove it and rotate that key before publishing.
+4. Review notebook outputs and CSV artifacts for copied credentials before commit.
+
 ## How To Run
 
 Dry run (small sanity check):
