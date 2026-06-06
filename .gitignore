@@ -46,3 +46,8 @@ paper/*.log
 paper/*.out
 paper/*.toc
 paper/*.synctex.gz
+
+# Local-only research and sensitive logs (User Eyes Only)
+LOCAL\ ONLY/
+local_only/
+*_local.*
