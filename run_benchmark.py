@@ -223,11 +223,13 @@ class LiveCSVWriter:
     ]
 
     def __init__(self, filepath: str):
-        self.file   = open(filepath, "w", newline="", encoding="utf-8")
+        file_exists = os.path.exists(filepath) and os.path.getsize(filepath) > 0
+        self.file   = open(filepath, "a" if file_exists else "w", newline="", encoding="utf-8")
         self.writer = csv.DictWriter(self.file, fieldnames=self.FIELDS)
-        self.writer.writeheader()
-        self.file.flush()
-        print(f"Results file created: {filepath}")
+        if not file_exists:
+            self.writer.writeheader()
+            self.file.flush()
+        print(f"Results file open: {filepath} (Append mode: {file_exists})")
         print("Each result is saved to disk immediately after every API call.\n")
 
     def write(self, row: dict):
@@ -295,7 +297,21 @@ def main():
     call_count   = 0
     summary      = defaultdict(lambda: defaultdict(lambda: {"attempted": 0, "succeeded": 0}))
 
-
+    # Check what runs are already finished to support resumption
+    finished_runs = set()
+    if not DRY_RUN and os.path.exists(RESULTS_FILE) and os.path.getsize(RESULTS_FILE) > 0:
+        try:
+            with open(RESULTS_FILE, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    tid = row.get("test_id")
+                    mname = row.get("model_name")
+                    dm = row.get("defense_mode")
+                    if tid and mname and dm:
+                        finished_runs.add((tid, mname, dm))
+            print(f"Found {len(finished_runs)} existing finished runs. Resuming...")
+        except Exception as e:
+            print(f"Warning: Could not parse existing CSV for resumption: {e}")
 
     print(f"Test cases loaded : {len(benchmark_cases)}")
     print(f"Models            : {', '.join(m[0] for m in models)}")
@@ -319,7 +335,10 @@ def main():
                 system_prompt   = get_system_prompt(defense_mode)
 
                 for model_name, model_fn in models:
-
+                    # Resumption check
+                    if not DRY_RUN and (test_id, model_name, defense_mode) in finished_runs:
+                        print(f"\n  SKIPPING: {test_id} | {model_name} | {defense_mode} (already completed)")
+                        continue
 
                     call_count += 1
                     print(f"\n  [{call_count}/{total_calls}] {test_id} | {model_name} | {defense_mode}")

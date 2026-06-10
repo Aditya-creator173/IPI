@@ -157,7 +157,24 @@ def run_benchmark(
     call_count = 0
 
     csv_path, jsonl_path = _result_paths(model_name)
-    csv_file = csv_path.open("w", newline="", encoding="utf-8")
+    file_exists = csv_path.exists() and csv_path.stat().st_size > 0
+    
+    # Check what runs are already finished to support resumption
+    finished_tests = set()
+    if file_exists:
+        try:
+            with csv_path.open("r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    tid = row.get("test_id")
+                    dm = row.get("defense_mode")
+                    if tid and dm:
+                        finished_tests.add((tid, dm))
+            print(f"Found {len(finished_tests)} existing finished runs. Resuming...")
+        except Exception as e:
+            print(f"Warning: Could not parse existing CSV for resumption: {e}")
+
+    csv_file = csv_path.open("a" if file_exists else "w", newline="", encoding="utf-8")
     fieldnames = [
         "test_id", "model_name", "defense_mode",
         "prompt_sent", "response_received",
@@ -165,24 +182,55 @@ def run_benchmark(
         "needs_review", "response_length_chars"
     ]
     csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    csv_writer.writeheader()
-    csv_file.flush()
+    if not file_exists:
+        csv_writer.writeheader()
+        csv_file.flush()
 
-    jsonl_file = jsonl_path.open("w", encoding="utf-8")
+    jsonl_file = jsonl_path.open("a" if jsonl_path.exists() and jsonl_path.stat().st_size > 0 else "w", encoding="utf-8")
 
     print(f"Model: {model_name}")
     print(f"Cases: {len(benchmark_cases)} | Defenses: {', '.join(modes_to_run)}")
     print(f"Output CSV: {csv_path}")
     print(f"Output JSONL: {jsonl_path}")
 
+    # Helper function to attempt rotation on 429 errors
+    def try_rotate(err_msg: str) -> bool:
+        e_lower = err_msg.lower()
+        if "429" in e_lower or "rate limit" in e_lower or "quota" in e_lower:
+            raw_token = os.environ.get("GITHUB_TOKEN", "")
+            if not raw_token:
+                return False
+            tokens = [t.strip() for t in raw_token.split(",") if t.strip()]
+            if len(tokens) <= 1:
+                return False
+            
+            # Use module-level state inside _core to keep track of current token index
+            if not hasattr(run_benchmark, "github_token_idx"):
+                run_benchmark.github_token_idx = 0
+            
+            run_benchmark.github_token_idx = (run_benchmark.github_token_idx + 1) % len(tokens)
+            new_token = tokens[run_benchmark.github_token_idx]
+            
+            # Find client in caller globals and re-assign api_key
+            model_globals = getattr(model_call, "__globals__", {})
+            client = model_globals.get("client")
+            if client and hasattr(client, "api_key"):
+                client.api_key = new_token
+                print(f"\n[Token Rotation] GitHub token limit hit. Rotating to token index {run_benchmark.github_token_idx}...")
+                return True
+        return False
 
+    import os
     try:
         for defense_mode in modes_to_run:
             for test_case in benchmark_cases:
                 call_count += 1
                 test_id = str(test_case.get("id", "UNKNOWN"))
                 
-
+                # Resumption check
+                if (test_id, defense_mode) in finished_tests:
+                    print(f"[{call_count}/{total_calls}] {test_id} | {defense_mode} - SKIPPING (already completed)")
+                    continue
                 
                 raw_prompt = str(test_case.get("full_prompt", ""))
                 prompt = _apply_defense(raw_prompt, defense_mode)
@@ -195,7 +243,15 @@ def run_benchmark(
                 try:
                     response_text = model_call(prompt, system_prompt)
                 except Exception as e:
-                    response_text = f"API_ERROR: {str(e)[:200]}"
+                    # Catch rate limit / 429 and attempt token rotation
+                    if try_rotate(str(e)):
+                        try:
+                            print("Retrying API call with rotated token...")
+                            response_text = model_call(prompt, system_prompt)
+                        except Exception as retry_err:
+                            response_text = f"API_ERROR: {str(retry_err)[:200]}"
+                    else:
+                        response_text = f"API_ERROR: {str(e)[:200]}"
 
                 succeeded, reason = _check_attack_succeeded(response_text, phrases)
                 preview = response_text[:150].replace("\n", " ")
