@@ -51,12 +51,14 @@ def _repo_root() -> Path:
 
 
 def _load_benchmark() -> list[dict]:
-    path = _repo_root() / "benchmark.json"
+    path = _repo_root() / "benchmark_v2.json"
+    if not path.exists():
+        path = _repo_root() / "benchmark.json"
     if not path.exists():
         raise FileNotFoundError(f"Cannot find benchmark file: {path}")
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, list):
-        raise ValueError("benchmark.json must be a JSON list.")
+        raise ValueError("benchmark file must be a JSON list.")
     return data
 
 
@@ -131,8 +133,15 @@ def run_benchmark(
     model_name = model_name or run_name
     dry_run = "--dry-run" in sys.argv
     validate = "--validate" in sys.argv
+    v1_only = "--v1-only" in sys.argv
 
     benchmark_cases = _load_benchmark()
+    
+    if v1_only:
+        v1_ids = {"A001", "A008", "A021", "A027", "A033", "A035", "B005", "B008", "B010", "B012", "B013", "B035", "C007", "C009", "C010", "C012", "C021", "C025", "C027", "C030"}
+        benchmark_cases = [c for c in benchmark_cases if str(c.get("id", "")).upper() in v1_ids]
+        print(f"v1-only mode: filtered to {len(benchmark_cases)} cases")
+
     modes_to_run = DEFENSE_MODES
 
     if validate:
@@ -149,14 +158,13 @@ def run_benchmark(
 
     csv_path, jsonl_path = _result_paths(model_name)
     csv_file = csv_path.open("w", newline="", encoding="utf-8")
-    csv_writer = csv.DictWriter(
-        csv_file,
-        fieldnames=[
-            "test_id", "model_name", "defense_mode",
-            "prompt_sent", "response_received",
-            "attack_succeeded", "detection_reason",
-        ],
-    )
+    fieldnames = [
+        "test_id", "model_name", "defense_mode",
+        "prompt_sent", "response_received",
+        "attack_succeeded", "detection_reason",
+        "needs_review", "response_length_chars"
+    ]
+    csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     csv_writer.writeheader()
     csv_file.flush()
 
@@ -167,17 +175,23 @@ def run_benchmark(
     print(f"Output CSV: {csv_path}")
     print(f"Output JSONL: {jsonl_path}")
 
+
     try:
         for defense_mode in modes_to_run:
             for test_case in benchmark_cases:
                 call_count += 1
                 test_id = str(test_case.get("id", "UNKNOWN"))
+                
+
+                
                 raw_prompt = str(test_case.get("full_prompt", ""))
                 prompt = _apply_defense(raw_prompt, defense_mode)
                 system_prompt = _system_prompt(defense_mode)
                 phrases = _get_success_phrases(test_case)
 
                 print(f"[{call_count}/{total_calls}] {test_id} | {defense_mode}")
+                
+                response_text = None
                 try:
                     response_text = model_call(prompt, system_prompt)
                 except Exception as e:
@@ -188,6 +202,11 @@ def run_benchmark(
                 print(f"  RESPONSE: {preview}")
                 print(f"  RESULT: {'SUCCESS' if succeeded else 'BLOCKED'} | {reason}")
 
+                # Determine if manual review is needed
+                clean = response_text.strip()
+                response_lower = response_text.lower()
+                needs_review = 1 if (len(clean) < 60 or "api_error" in response_lower or clean == "") else 0
+
                 row = {
                     "test_id": test_id,
                     "model_name": model_name,
@@ -196,6 +215,8 @@ def run_benchmark(
                     "response_received": response_text,
                     "attack_succeeded": succeeded,
                     "detection_reason": reason,
+                    "needs_review": needs_review,
+                    "response_length_chars": len(response_text)
                 }
 
                 csv_writer.writerow(row)

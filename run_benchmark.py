@@ -43,7 +43,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 # ===========================================================================
 # SETTINGS
 # ===========================================================================
-BENCHMARK_FILE = "benchmark.json"
+BENCHMARK_FILE = "benchmark_v2.json" if os.path.exists("benchmark_v2.json") else "benchmark.json"
 RESULTS_FILE   = "results.csv"
 PAUSE_SECONDS  = 1.5
 DEFENSE_MODES  = ["none", "prompt_warning", "spotlighting", "input_filter"]
@@ -219,6 +219,7 @@ class LiveCSVWriter:
         "test_id", "model_name", "defense_mode",
         "prompt_sent", "response_received",
         "attack_succeeded", "detection_reason",
+        "needs_review", "response_length_chars",
     ]
 
     def __init__(self, filepath: str):
@@ -257,6 +258,11 @@ def main():
 
     benchmark_cases = load_benchmark()
 
+    if "--v1-only" in sys.argv:
+        v1_ids = {"A001", "A008", "A021", "A027", "A033", "A035", "B005", "B008", "B010", "B012", "B013", "B035", "C007", "C009", "C010", "C012", "C021", "C025", "C027", "C030"}
+        benchmark_cases = [c for c in benchmark_cases if str(c.get("id", "")).upper() in v1_ids]
+        print(f"v1-only mode: filtered to {len(benchmark_cases)} cases")
+
     if DRY_RUN:
         benchmark_cases = benchmark_cases[:3]
         print("=" * 60)
@@ -289,6 +295,8 @@ def main():
     call_count   = 0
     summary      = defaultdict(lambda: defaultdict(lambda: {"attempted": 0, "succeeded": 0}))
 
+
+
     print(f"Test cases loaded : {len(benchmark_cases)}")
     print(f"Models            : {', '.join(m[0] for m in models)}")
     print(f"Defense modes     : {', '.join(modes_to_run)}")
@@ -311,6 +319,8 @@ def main():
                 system_prompt   = get_system_prompt(defense_mode)
 
                 for model_name, model_fn in models:
+
+
                     call_count += 1
                     print(f"\n  [{call_count}/{total_calls}] {test_id} | {model_name} | {defense_mode}")
 
@@ -333,6 +343,11 @@ def main():
                     status = ">>> ATTACK SUCCEEDED <<<" if succeeded else "blocked/failed"
                     print(f"  RESULT: {status}  |  {reason}")
 
+                    # Determine if manual review is needed
+                    clean = response_text.strip()
+                    response_lower = response_text.lower()
+                    needs_review = 1 if (len(clean) < 60 or "api_error" in response_lower or clean == "") else 0
+
                     if csv_writer:
                         csv_writer.write({
                             "test_id":           test_id,
@@ -342,6 +357,8 @@ def main():
                             "response_received": response_text,
                             "attack_succeeded":  succeeded,
                             "detection_reason":  reason,
+                            "needs_review":      needs_review,
+                            "response_length_chars": len(response_text)
                         })
 
                     time.sleep(PAUSE_SECONDS)
