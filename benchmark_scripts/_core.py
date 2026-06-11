@@ -9,6 +9,7 @@ and then calls run_benchmark(...).
 
 import csv
 import json
+import os
 import re
 import sys
 import time
@@ -220,7 +221,6 @@ def run_benchmark(
                 return True
         return False
 
-    import os
     try:
         for defense_mode in modes_to_run:
             for test_case in benchmark_cases:
