@@ -1,1 +1,1026 @@
-[]
+[
+  {
+    "id": "A001",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A003",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A004",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A005",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A006",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A008",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "A009",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A010",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A011",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A012",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A013",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A014",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A015",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A018",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A019",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "A021",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "A022",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A023",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A024",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A025",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A026",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A027",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "injection_position": 0.55,
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "end_of_content",
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A028",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A029",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A030",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A031",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A032",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "A034",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B001",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B002",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "B003",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B004",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B005",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "B006",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B007",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B009",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B010",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B011",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B012",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "B013",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B014",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B015",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B016",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B017",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B019",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "B020",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B021",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B022",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B023",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B024",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B025",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B026",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B027",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B028",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B029",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B030",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B031",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B032",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "B034",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C001",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C002",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C003",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C004",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C005",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C006",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C007",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C009",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "C010",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "C011",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C012",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "injection_position": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline"
+    }
+  },
+  {
+    "id": "C013",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C015",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C016",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C017",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C018",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C019",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C020",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C021",
+    "min_confidence": 0.55,
+    "low_conf_fields": {
+      "injection_position": 0.55,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "end_of_content",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C022",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C023",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "C024",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C025",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "linguistic_register": 0.5
+    },
+    "current_values": {
+      "linguistic_register": "imperative"
+    }
+  },
+  {
+    "id": "C026",
+    "min_confidence": 0.6,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C028",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "injection_position": 0.65,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C029",
+    "min_confidence": 0.5,
+    "low_conf_fields": {
+      "target_action_type": 0.6,
+      "linguistic_register": 0.5,
+      "harm_severity": 0.65
+    },
+    "current_values": {
+      "target_action_type": "output_substitution",
+      "linguistic_register": "imperative",
+      "harm_severity": "low"
+    }
+  },
+  {
+    "id": "C030",
+    "min_confidence": 0.65,
+    "low_conf_fields": {
+      "injection_position": 0.65
+    },
+    "current_values": {
+      "injection_position": "inline"
+    }
+  }
+]
