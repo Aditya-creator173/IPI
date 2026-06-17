@@ -16,38 +16,36 @@ Indirect prompt injection happens when an attacker places instructions inside co
 
 If the model treats those embedded instructions as valid commands, it can deviate from the user goal without obvious signs.
 
-## Benchmark Scope
+## Benchmark Scope & Taxonomy
 
-This benchmark includes:
+This benchmark evaluates models against a structured 8-dimension taxonomy to study the mechanics of Indirect Prompt Injection (IPI) at a granular level:
+- **Core Dimensions:** `category` (webpage, file, tool_output), `attack_goal` (task_hijacking, exfiltration, etc.), `evasion_style`, `injection_position`, `authority_claimed`, `target_action_type`, `linguistic_register`, `harm_severity`, and `persistence` flags.
+- **Evaluation Set:** 100 high-fidelity, hand-crafted attack scenarios structured in [benchmark_v2.json](benchmark_v2.json).
+- **Defense Mode Evaluator:** Core engine tests each attack scenario against 4 defenses:
+  - `none` (No defense baseline)
+  - `prompt_warning` (System notice to ignore external instruction blocks)
+  - `spotlighting` (XML-based input isolation delimiters)
+  - `input_filter` (Suspicious keyword regex filtering)
 
-- 100 hand-crafted attack scenarios in [benchmark.json](benchmark.json)
-- multiple attack goals and evasion styles per scenario
-- per-scenario success indicators for automatic scoring
-- defense-mode comparisons in the same evaluation run
+## Key Insights & Discoveries
 
-The current runner script in this repository evaluates four defense modes:
-
-- none
-- prompt_warning
-- spotlighting
-- input_filter
-
-## Key Findings
-
-Work-in-Progress
+Our empirical evaluations across a wide spectrum of closed and open models have yielded **21 Novel Research Findings (NRFs)**, exposing deep safety gaps in state-of-the-art LLMs:
+- **Paradoxical Disclosure (NRF-006):** In reasoning models (like DeepSeek V3), models can explicitly explain they are compromised by an injection, yet proceed to comply with it anyway (decoupling introspective awareness from control resistance).
+- **In-Group Creator Impersonation Bias (NRF-011):** Certain models (like Grok 4) successfully reject impersonated instructions from generic entities, but yield completely when the instruction claims to be from their own parent/operations team.
+- **Cross-Lingual control bypasses (NRF-010):** Translating the attack instruction into a low-resource or non-English language (e.g., Hindi) increases the Attack Success Rate (ASR) significantly.
+- **Stealth Session Persistence (NRF-004):** Adversarial instructions in multi-turn contexts redirecting future behavior without outputting obvious anomalous strings.
 
 ## Repository Structure
 
-- [README.md](README.md): project overview, setup, and reproducibility notes
-- [benchmark.json](benchmark.json): 100 attack scenarios with success criteria
-- [run_benchmark.py](run_benchmark.py): evaluation script
-- [benchmark_scripts/](benchmark_scripts/): flat per-model runners plus shared helpers (`_core.py`, `_google.py`, `_openrouter.py`)
-- [merge_results.py](merge_results.py): merges per-model CSV outputs into one final file
-- [results/csv/](results/csv/): per-model CSV output files
-- [results/jsonl/](results/jsonl/): per-model JSONL output files
-- [analysis/analysis.ipynb](analysis/analysis.ipynb): visualization and analysis notebook
-- [paper/draft.pdf](paper/draft.pdf): working paper draft
-- [requirements.txt](requirements.txt): Python dependencies
+- [README.md](README.md): Project overview, setup, and execution guide
+- [benchmark_v2.json](benchmark_v2.json): 100 structured IPI scenarios with metadata tags and success phrases
+- [benchmark_scripts/](benchmark_scripts/): Model-specific execution harness containing:
+  - [_core.py](benchmark_scripts/_core.py): Shared evaluation driver (resumption support, rotation, checks)
+  - `run_*.py`: Model runners for 27+ open/closed models (including GPT, Claude, Gemini, Qwen, DeepSeek)
+- [merge_results.py](merge_results.py): Compiles per-model CSV results into a unified table
+- [results/](results/): Outputs folder (gitignored csv/jsonl files, maintaining directory placeholders)
+- [analysis/](analysis/): Jupyter notebooks for plotting metrics and visual comparisons
+- [requirements.txt](requirements.txt): Python package dependencies
 
 ## Setup
 
@@ -121,32 +119,42 @@ git grep -nE '(api[_-]?key|apikey|secret|token|password)[[:space:]]*[:=][[:space
 
 ## How To Run
 
-Dry run (small sanity check):
+Runs are managed via model-specific scripts in the `benchmark_scripts/` directory.
 
+### Supported Run Modes:
+- `--v1-only`: Filter to run only the 20-prompt core V1 subset (ideal for fast-track/cost-controlled tests).
+- `--full` (default): Run all 100 scenarios.
+- `--dry-run`: Test the first 3 cases against the model using no defenses.
+- `--validate`: Run case `A001` across all 4 defense modes to verify client connectivity.
+
+### Example Run Commands:
+
+Dry run sanity check:
 ```bash
-python run_benchmark.py --dry-run
+python benchmark_scripts/run_gemini3_flash.py --dry-run
 ```
 
-Full run:
-
+Core V1 evaluation run (20 cases x 4 defenses = 80 queries):
 ```bash
-python run_benchmark.py
+python benchmark_scripts/run_gemini3_flash.py --v1-only
+```
+
+Full benchmark run (100 cases x 4 defenses = 400 queries):
+```bash
+python benchmark_scripts/run_gemini3_flash.py
 ```
 
 ## Output Files
 
-Model scripts write outputs directly to:
+Run output is automatically saved to provider-specific outputs inside:
+- [results/csv/](results/csv/): Individual model CSV spreadsheets containing execution parameters, success results, and character metrics.
+- [results/jsonl/](results/jsonl/): Structured JSONL files for post-hoc analysis.
 
-- [results/csv/](results/csv/) as per-model CSV files
-- [results/jsonl/](results/jsonl/) as per-model JSONL files
-
-To merge all per-model CSV files into one final table:
-
+To combine all results into one unified table:
 ```bash
 python merge_results.py
 ```
-
-This produces [results/results_final.csv](results/results_final.csv).
+This consolidates all model CSVs into [results/results_final.csv](results/results_final.csv).
 
 ## Reproducibility Checklist
 

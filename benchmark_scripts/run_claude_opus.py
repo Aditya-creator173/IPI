@@ -1,7 +1,7 @@
 """
-run_claude_opus.py  —  Claude Opus 4.7 via Anthropic API
+run_claude_opus.py  —  Claude Opus 4.8 via Anthropic API
 Provider  : Anthropic
-Model ID  : claude-opus-4-7  (verify exact string at console.anthropic.com)
+Model ID  : claude-opus-4-8  (verify exact string at console.anthropic.com)
 Rate limit: Depends on credits — Opus costs more per token, pace carefully
 Env var   : ANTHROPIC_API_KEY
 Note      : Flagship Constitutional AI model. Most expensive per call —
@@ -18,7 +18,7 @@ import anthropic
 from _core import run_benchmark
 
 MODEL_NAME    = "claude_opus"
-MODEL_ID      = "claude-opus-4-7"   # confirm exact ID at console.anthropic.com
+MODEL_ID      = "claude-opus-4-8"   # confirm exact ID at console.anthropic.com
 PAUSE_SECONDS = 3.0                  # extra pause — Opus tokens cost more
 
 client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
