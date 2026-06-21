@@ -3,9 +3,6 @@ run_mai_ds_r1.py  —  MAI-DS-R1 via GitHub Models
 Provider  : GitHub Models (PAT)
 Model ID  : MAI-DS-R1
 Rate tier : LOW — 150 RPD, 15 RPM
-Note      : DeepSeek R1 base + Microsoft safety post-training.
-            Reasoning model — produces think blocks. System prompt folded
-            into user message for best compatibility.
 
 Usage:
     python run_mai_ds_r1.py
