@@ -1,4 +1,4 @@
-name: IPIBench CI
+name: IPIBench CI — Security + Validation
 
 on:
   push:
@@ -6,10 +6,296 @@ on:
   pull_request:
     branches: ["main"]
 
+# Prevent concurrent runs on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint-and-validate:
-    name: Lint & Schema Validate
+  # ══════════════════════════════════════════════════════════════════════════════
+  # JOB 1: SECRET & SENSITIVE-DATA LEAK DETECTION
+  # Runs FIRST. All other jobs are blocked if this fails.
+  # ══════════════════════════════════════════════════════════════════════════════
+  secret-scan:
+    name: 🔒 Secret & Sensitive Data Scan
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (full history for deep scan)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full git history — catches secrets in old commits too
+
+      # ── Layer 1: Gitleaks (scans entire git history, not just working tree) ──
+      - name: Gitleaks — full history scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}  # free for public repos
+        # Gitleaks v2 action exits 1 on findings, failing the job automatically
+
+      # ── Layer 2: detect-secrets (Yelp's entropy + pattern scanner) ──────────
+      - name: Set up Python for detect-secrets
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install detect-secrets
+        run: pip install detect-secrets==1.5.0
+
+      - name: detect-secrets scan
+        run: |
+          detect-secrets scan \
+            --exclude-files '\.env\.example$' \
+            --exclude-files '\.gitignore$' \
+            --exclude-files 'requirements.*\.txt$' \
+            --exclude-files 'README\.md$' \
+            --exclude-files '.*\.gitkeep$' \
+            --baseline /dev/null \
+            > /tmp/ds_results.json
+          # Parse results — fail if any secrets found
+          python - <<'PYEOF'
+          import json, sys
+          data = json.load(open("/tmp/ds_results.json"))
+          results = data.get("results", {})
+          if results:
+              print("❌ detect-secrets found potential secrets:")
+              for filepath, findings in results.items():
+                  for f in findings:
+                      print(f"  {filepath}:{f.get('line_number','?')} — {f.get('type','?')}")
+              sys.exit(1)
+          else:
+              print("✅ detect-secrets: no secrets detected")
+          PYEOF
+
+      # ── Layer 3: Custom regex scan (project-specific patterns) ───────────────
+      - name: Custom regex secret scan
+        run: |
+          FOUND=0
+
+          # Patterns that must NEVER appear in tracked files
+          declare -A PATTERNS=(
+            ["hardcoded_api_key"]='(api[_-]?key|apikey|api_secret)[[:space:]]*[=:][[:space:]]*["\x27][A-Za-z0-9_\-]{16,}["\x27]'
+            ["openai_sk"]='sk-[A-Za-z0-9]{20,}'
+            ["openai_proj_key"]='sk-proj-[A-Za-z0-9_\-]{20,}'
+            ["anthropic_key"]='sk-ant-[A-Za-z0-9_\-]{20,}'
+            ["github_pat_classic"]='ghp_[A-Za-z0-9]{36,}'
+            ["github_pat_fine"]='github_pat_[A-Za-z0-9_]{59,}'
+            ["google_api_key"]='AIza[0-9A-Za-z_\-]{35}'
+            ["groq_key"]='gsk_[A-Za-z0-9]{52}'
+            ["xai_key"]='xai-[A-Za-z0-9_\-]{40,}'
+            ["nvidia_key"]='nvapi-[A-Za-z0-9_\-]{30,}'
+            ["openrouter_key"]='sk-or-[A-Za-z0-9_\-]{20,}'
+            ["bearer_token"]='Bearer[[:space:]]+[A-Za-z0-9_\-\.]{30,}'
+            ["aws_access_key"]='AKIA[0-9A-Z]{16}'
+            ["private_key_header"]='-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----'
+            ["password_assignment"]='password[[:space:]]*=[[:space:]]*["\x27][^"\x27]{8,}["\x27]'
+          )
+
+          EXCLUDE_FLAGS=(
+            ":(exclude).env.example"
+            ":(exclude)README.md"
+            ":(exclude).gitignore"
+            ":(exclude)requirements.txt"
+            ":(exclude)requirements-dev.txt"
+            ":(exclude).github/workflows/ci.yml"
+          )
+
+          for name in "${!PATTERNS[@]}"; do
+            pat="${PATTERNS[$name]}"
+            hits=$(git grep -nE "$pat" -- . "${EXCLUDE_FLAGS[@]}" 2>/dev/null || true)
+            if [ -n "$hits" ]; then
+              echo "❌ PATTERN MATCH [$name]:"
+              echo "$hits"
+              FOUND=1
+            fi
+          done
+
+          if [ "$FOUND" -eq 1 ]; then
+            echo ""
+            echo "❌ Custom scan: credential patterns detected — commit BLOCKED"
+            exit 1
+          else
+            echo "✅ Custom scan: no credential patterns detected"
+          fi
+
+      # ── Layer 4: Entropy scan (catches obfuscated / renamed keys) ────────────
+      - name: High-entropy string scan
+        run: |
+          pip install -q truffleHog3
+          trufflehog3 \
+            --no-history \
+            --exclude-paths <(cat <<'EOF'
+          .env.example
+          README.md
+          .gitignore
+          requirements.txt
+          .github/
+          *.gitkeep
+          EOF
+          ) \
+            filesystem . \
+          && echo "✅ truffleHog3: no high-entropy strings detected" \
+          || (echo "❌ truffleHog3: high-entropy strings found — review above output" && exit 1)
+
+      # ── Layer 5: Forbidden file & path guard ─────────────────────────────────
+      - name: Forbidden file & path guard
+        run: |
+          FOUND=0
+
+          # Files/dirs that must NEVER appear in the git tree
+          FORBIDDEN_PATHS=(
+            "LOCAL ONLY"
+            "local_only"
+            ".env"
+            "secrets/"
+            "*.key"
+            "*.pem"
+            "*.p12"
+          )
+
+          # Forbidden file extensions in tracked files
+          FORBIDDEN_EXTENSIONS=(
+            ".env.local"
+            ".env.development"
+            ".env.production"
+            ".env.test"
+          )
+
+          echo "--- Checking for forbidden paths in git tree ---"
+          for pattern in "${FORBIDDEN_PATHS[@]}"; do
+            hits=$(git ls-files | grep -i "$pattern" || true)
+            if [ -n "$hits" ]; then
+              echo "❌ Forbidden path found in git tree: $hits"
+              FOUND=1
+            fi
+          done
+
+          for ext in "${FORBIDDEN_EXTENSIONS[@]}"; do
+            hits=$(git ls-files | grep -F "$ext" || true)
+            if [ -n "$hits" ]; then
+              echo "❌ Forbidden env file variant found: $hits"
+              FOUND=1
+            fi
+          done
+
+          # Verify .env itself is NOT tracked
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "❌ CRITICAL: .env is tracked by git!"
+            FOUND=1
+          fi
+
+          if [ "$FOUND" -eq 1 ]; then
+            echo "❌ Forbidden file guard: violations found — commit BLOCKED"
+            exit 1
+          else
+            echo "✅ Forbidden file guard: all clear"
+          fi
+
+      # ── Layer 6: Data file leak guard ─────────────────────────────────────────
+      - name: Data & result file leak guard
+        run: |
+          FOUND=0
+
+          echo "--- Checking for benchmark result data files in git tree ---"
+
+          # These file patterns should NEVER be committed
+          DATA_PATTERNS=(
+            "results/*.csv"
+            "results/*.jsonl"
+            "results/csv/*.csv"
+            "results/csv/*.jsonl"
+            "results/jsonl/*.jsonl"
+            "results/jsonl/*.csv"
+            "analysis/*.csv"
+            "analysis/*.jsonl"
+          )
+
+          for pattern in "${DATA_PATTERNS[@]}"; do
+            # Use git ls-files with glob
+            hits=$(git ls-files "$pattern" 2>/dev/null || true)
+            if [ -n "$hits" ]; then
+              echo "❌ Data file found in git tree: $hits"
+              FOUND=1
+            fi
+          done
+
+          # Also check for any .jsonl files anywhere (raw response data)
+          jsonl_hits=$(git ls-files "*.jsonl" 2>/dev/null || true)
+          if [ -n "$jsonl_hits" ]; then
+            echo "❌ JSONL data file found in git tree: $jsonl_hits"
+            FOUND=1
+          fi
+
+          if [ "$FOUND" -eq 1 ]; then
+            echo "❌ Data leak guard: result files found in repo — commit BLOCKED"
+            exit 1
+          else
+            echo "✅ Data leak guard: no result data files in repo"
+          fi
+
+      # ── Layer 7: Large file guard (catches accidental dataset uploads) ────────
+      - name: Large file size guard
+        run: |
+          FOUND=0
+          MAX_BYTES=524288  # 512 KB — anything larger is suspicious for this repo
+
+          # Check all tracked files
+          while IFS= read -r filepath; do
+            if [ -f "$filepath" ]; then
+              size=$(wc -c < "$filepath")
+              if [ "$size" -gt "$MAX_BYTES" ]; then
+                echo "❌ Oversized file: $filepath ($size bytes > $MAX_BYTES limit)"
+                FOUND=1
+              fi
+            fi
+          done < <(git ls-files)
+
+          if [ "$FOUND" -eq 1 ]; then
+            echo "❌ Large file guard: oversized files detected — commit BLOCKED"
+            exit 1
+          else
+            echo "✅ Large file guard: all tracked files within size limit"
+          fi
+
+      # ── Layer 8: Notebook output guard ───────────────────────────────────────
+      - name: Jupyter notebook output guard
+        run: |
+          FOUND=0
+
+          # Check every tracked .ipynb for cell outputs (may contain API responses)
+          while IFS= read -r nb; do
+            if [ -f "$nb" ]; then
+              has_output=$(python3 -c "
+          import json, sys
+          nb = json.load(open('$nb'))
+          for cell in nb.get('cells', []):
+              if cell.get('outputs'):
+                  print('HAS_OUTPUT')
+                  sys.exit(0)
+          " 2>/dev/null || true)
+              if [ "$has_output" = "HAS_OUTPUT" ]; then
+                echo "❌ Notebook with outputs: $nb (outputs may contain sensitive data)"
+                FOUND=1
+              fi
+            fi
+          done < <(git ls-files "*.ipynb")
+
+          if [ "$FOUND" -eq 1 ]; then
+            echo ""
+            echo "❌ Notebook guard: clear outputs before committing (nbconvert --clear-output)"
+            exit 1
+          else
+            echo "✅ Notebook guard: all notebooks have cleared outputs"
+          fi
+
+  # ══════════════════════════════════════════════════════════════════════════════
+  # JOB 2: CODE QUALITY — only runs if secret scan passes
+  # ══════════════════════════════════════════════════════════════════════════════
+  lint-and-validate:
+    name: 🧪 Lint & Schema Validate
+    runs-on: ubuntu-latest
+    needs: secret-scan   # BLOCKED if secret scan fails
 
     steps:
       - name: Checkout repository
@@ -37,7 +323,6 @@ jobs:
           import json, sys
           from pathlib import Path
 
-          # Prefer v2, fall back to v1
           path = Path("benchmark_v2.json")
           if not path.exists():
               path = Path("benchmark.json")
@@ -51,30 +336,68 @@ jobs:
               missing = required_base - set(case.keys())
               assert not missing, f"Case {i} missing fields: {missing}"
 
-          print(f"OK — {path.name}: {len(data)} scenarios validated")
+          print(f"✅ {path.name}: {len(data)} scenarios validated")
           EOF
-
-      - name: Secret scan (no real credentials in tracked files)
-        run: |
-          git grep -nE \
-            '(api[_-]?key|apikey|secret|token|password)[[:space:]]*[:=][[:space:]]*["'"'"'][^"'"'"']{8,}["'"'"']|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{20,}|AIza[0-9A-Za-z_-]{20,}' \
-            -- . \
-            ':(exclude).env.example' \
-            ':(exclude)README.md' \
-            && echo "WARNING: Possible credentials found above — review before merging" \
-            && exit 1 \
-            || echo "OK — no credential patterns detected in tracked files"
 
       - name: Check benchmark_scripts syntax
         run: |
+          FAIL=0
           for f in benchmark_scripts/*.py; do
-            python -m py_compile "$f" && echo "OK: $f"
+            if python -m py_compile "$f" 2>&1; then
+              echo "✅ $f"
+            else
+              echo "❌ $f — syntax error"
+              FAIL=1
+            fi
           done
+          [ "$FAIL" -eq 0 ] || exit 1
 
       - name: Check root scripts syntax
         run: |
+          FAIL=0
           for f in run_benchmark.py merge_results.py migrate_benchmark.py; do
             if [ -f "$f" ]; then
-              python -m py_compile "$f" && echo "OK: $f"
+              if python -m py_compile "$f" 2>&1; then
+                echo "✅ $f"
+              else
+                echo "❌ $f — syntax error"
+                FAIL=1
+              fi
             fi
           done
+          [ "$FAIL" -eq 0 ] || exit 1
+
+      - name: Verify .env.example has no real values
+        run: |
+          python - <<'EOF'
+          import re, sys
+          from pathlib import Path
+
+          content = Path(".env.example").read_text()
+          lines = content.splitlines()
+          suspicious = []
+
+          for i, line in enumerate(lines, 1):
+              line = line.strip()
+              # Skip comments and blank lines
+              if not line or line.startswith("#"):
+                  continue
+              # Each line must be KEY= or KEY=placeholder_without_real_value
+              # Real values: 16+ char alphanumeric after the =
+              m = re.match(r'^[A-Z_]+=(.*)$', line)
+              if m:
+                  val = m.group(1).strip().strip('"\'')
+                  # Flag if value looks like a real key (long, high entropy)
+                  if len(val) >= 16 and re.search(r'[A-Za-z0-9]{16,}', val):
+                      # Allow known safe model ID defaults
+                      if not re.search(r'(grok|glm|deepseek|kimi|minimax|nemotron|model)', val, re.I):
+                          suspicious.append(f"  Line {i}: {line}")
+
+          if suspicious:
+              print("❌ .env.example contains suspicious values (may be real keys):")
+              for s in suspicious:
+                  print(s)
+              sys.exit(1)
+          else:
+              print("✅ .env.example: all values are empty or safe placeholders")
+          EOF

@@ -1,0 +1,309 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+IPIBench Pre-Commit Security Hook
+==================================
+Runs automatically on every `git commit`. Blocks the commit if any
+confidential data, API keys, result files, or forbidden paths are detected.
+
+Install:  python .githooks/install_hooks.py
+Manual:   copy this file to .git/hooks/pre-commit  (must be executable)
+"""
+
+import json
+import io
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+# Force UTF-8 output on Windows
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
+# ── ANSI colors ────────────────────────────────────────────────────────────────
+RED   = "\033[91m"
+GRN   = "\033[92m"
+YLW   = "\033[93m"
+BLD   = "\033[1m"
+RST   = "\033[0m"
+
+def ok(msg):    print(f"  {GRN}✅ {msg}{RST}")
+def fail(msg):  print(f"  {RED}❌ {msg}{RST}")
+def warn(msg):  print(f"  {YLW}⚠️  {msg}{RST}")
+def section(title): print(f"\n{BLD}{'─'*60}\n  {title}\n{'─'*60}{RST}")
+
+# ── Get list of files staged for this commit ───────────────────────────────────
+def get_staged_files():
+    result = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
+        capture_output=True, text=True
+    )
+    return [f for f in result.stdout.strip().splitlines() if f]
+
+def get_staged_content(filepath):
+    """Get the staged (to-be-committed) content of a file."""
+    result = subprocess.run(
+        ["git", "show", f":{filepath}"],
+        capture_output=True, text=True, errors="replace"
+    )
+    return result.stdout if result.returncode == 0 else ""
+
+# ══════════════════════════════════════════════════════════════════════════════
+FAILURES = []
+
+def check(name, condition_ok, detail=""):
+    if condition_ok:
+        ok(name)
+    else:
+        fail(f"{name}" + (f": {detail}" if detail else ""))
+        FAILURES.append(name)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHECK 1: Forbidden file paths
+# ══════════════════════════════════════════════════════════════════════════════
+def check_forbidden_paths(staged):
+    section("Check 1: Forbidden file paths")
+
+    FORBIDDEN = [
+        r"LOCAL[\s_]ONLY",
+        r"local_only",
+        r"^\.env$",
+        r"\.env\.(local|development|production|test|staging)$",
+        r"secrets/",
+        r"\.key$",
+        r"\.pem$",
+        r"\.p12$",
+        r"_local\.",
+        r"manual_testing_log",
+        r"novel_research_findings",
+        r"disclosure_drafts/",
+    ]
+
+    found_any = False
+    for f in staged:
+        for pattern in FORBIDDEN:
+            if re.search(pattern, f, re.IGNORECASE):
+                fail(f"Forbidden path staged: {f}  (matches: {pattern})")
+                FAILURES.append(f"Forbidden path: {f}")
+                found_any = True
+
+    if not found_any:
+        ok("No forbidden paths staged")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHECK 2: Data / result file leak guard
+# ══════════════════════════════════════════════════════════════════════════════
+def check_data_files(staged):
+    section("Check 2: Benchmark data file leak guard")
+
+    DATA_PATTERNS = [
+        r"results/.*\.(csv|jsonl|json)$",
+        r"analysis/.*\.(csv|jsonl)$",
+        r".*_responses?\.(csv|jsonl|json)$",
+        r".*_results?\.(csv|jsonl|json)$",
+        r".*\.jsonl$",
+    ]
+
+    # Exceptions — these are always OK
+    WHITELISTED = [
+        "benchmark.json",
+        "benchmark_v2.json",
+        "benchmark_v2_review_flags.json",
+    ]
+
+    found_any = False
+    for f in staged:
+        basename = Path(f).name
+        if basename in WHITELISTED:
+            continue
+        for pattern in DATA_PATTERNS:
+            if re.search(pattern, f, re.IGNORECASE):
+                fail(f"Data file staged: {f}  — this may contain raw model responses")
+                FAILURES.append(f"Data file: {f}")
+                found_any = True
+
+    if not found_any:
+        ok("No benchmark data files staged")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHECK 3: Secret pattern scan in staged file content
+# ══════════════════════════════════════════════════════════════════════════════
+def check_secrets_in_content(staged):
+    section("Check 3: Secret pattern scan in staged content")
+
+    # Files that are explicitly safe to skip content-scanning
+    SKIP_FILES = {
+        ".env.example", ".gitignore", "requirements.txt",
+        "requirements-dev.txt", "README.md",
+        ".github/workflows/ci.yml",
+        ".githooks/pre-commit",
+        ".githooks/install_hooks.py",
+    }
+
+    SECRET_PATTERNS = {
+        "OpenAI key (sk-)":         r"sk-[A-Za-z0-9]{20,}",
+        "OpenAI project key":       r"sk-proj-[A-Za-z0-9_\-]{20,}",
+        "Anthropic key":            r"sk-ant-[A-Za-z0-9_\-]{20,}",
+        "GitHub PAT (classic)":     r"ghp_[A-Za-z0-9]{36,}",
+        "GitHub PAT (fine-grained)":r"github_pat_[A-Za-z0-9_]{59,}",
+        "Google API key":           r"AIza[0-9A-Za-z_\-]{35}",
+        "Groq key":                 r"gsk_[A-Za-z0-9]{52}",
+        "xAI key":                  r"xai-[A-Za-z0-9_\-]{40,}",
+        "NVIDIA NIM key":           r"nvapi-[A-Za-z0-9_\-]{30,}",
+        "OpenRouter key":           r"sk-or-[A-Za-z0-9_\-]{20,}",
+        "AWS access key":           r"AKIA[0-9A-Z]{16}",
+        "Private key header":       r"-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----",
+        "Hardcoded api_key value":  r'(api[_-]?key|apikey)\s*=\s*["\'][A-Za-z0-9_\-]{16,}["\']',
+        "Hardcoded password":       r'password\s*=\s*["\'][^"\']{8,}["\']',
+        "Bearer token":             r"Bearer\s+[A-Za-z0-9_\-\.]{30,}",
+    }
+
+    found_any = False
+    for f in staged:
+        if Path(f).name in SKIP_FILES or f in SKIP_FILES:
+            continue
+        if not Path(f).exists():
+            continue
+
+        content = get_staged_content(f)
+        for name, pattern in SECRET_PATTERNS.items():
+            matches = re.findall(pattern, content)
+            if matches:
+                # Redact the actual value in output
+                fail(f"[{name}] found in {f} — REDACTED for safety")
+                FAILURES.append(f"Secret [{name}] in {f}")
+                found_any = True
+
+    if not found_any:
+        ok("No secret patterns found in staged content")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHECK 4: .env.example integrity (values must be empty)
+# ══════════════════════════════════════════════════════════════════════════════
+def check_env_example(staged):
+    if ".env.example" not in staged:
+        return  # Not being modified, skip
+
+    section("Check 4: .env.example value safety")
+
+    content = get_staged_content(".env.example")
+    suspicious = []
+
+    for i, line in enumerate(content.splitlines(), 1):
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        m = re.match(r"^[A-Z_]+=(.*)$", line)
+        if m:
+            val = m.group(1).strip().strip("\"'")
+            # Flag if value looks like a real key
+            if len(val) >= 16 and re.search(r"[A-Za-z0-9]{16,}", val):
+                # Allow known safe model ID defaults (they contain model names)
+                if not re.search(r"(grok|glm|deepseek|kimi|minimax|nemotron|model|scout|llama|mistral|phi|claude|gemini)", val, re.I):
+                    suspicious.append(f"    Line {i}: KEY=<REDACTED>")
+
+    if suspicious:
+        fail(".env.example may contain real key values:")
+        for s in suspicious:
+            print(s)
+        FAILURES.append(".env.example value safety")
+    else:
+        ok(".env.example: all values are empty or safe model IDs")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHECK 5: Jupyter notebook output guard
+# ══════════════════════════════════════════════════════════════════════════════
+def check_notebooks(staged):
+    notebooks = [f for f in staged if f.endswith(".ipynb")]
+    if not notebooks:
+        return
+
+    section("Check 5: Jupyter notebook output guard")
+
+    for nb_path in notebooks:
+        content = get_staged_content(nb_path)
+        try:
+            nb = json.loads(content)
+            has_output = any(
+                cell.get("outputs")
+                for cell in nb.get("cells", [])
+            )
+            if has_output:
+                fail(f"{nb_path} has cell outputs — clear with: jupyter nbconvert --clear-output {nb_path}")
+                FAILURES.append(f"Notebook outputs: {nb_path}")
+            else:
+                ok(f"{nb_path}: no outputs")
+        except json.JSONDecodeError:
+            warn(f"Could not parse {nb_path} as JSON")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHECK 6: File size guard (no accidental large data uploads)
+# ══════════════════════════════════════════════════════════════════════════════
+def check_file_sizes(staged):
+    section("Check 6: File size guard (max 512 KB per file)")
+
+    MAX_BYTES = 512 * 1024  # 512 KB
+
+    # Some files are legitimately larger
+    SIZE_EXEMPT = {"benchmark.json", "benchmark_v2.json", "benchmark_v2_review_flags.json"}
+
+    found_any = False
+    for f in staged:
+        if Path(f).name in SIZE_EXEMPT:
+            continue
+        if not Path(f).exists():
+            continue
+        size = Path(f).stat().st_size
+        if size > MAX_BYTES:
+            fail(f"{f} is {size:,} bytes (>{MAX_BYTES:,} limit) — likely contains data")
+            FAILURES.append(f"Oversized file: {f}")
+            found_any = True
+
+    if not found_any:
+        ok("All staged files within size limit")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MAIN
+# ══════════════════════════════════════════════════════════════════════════════
+def main():
+    print(f"\n{BLD}{'═'*60}")
+    print("  IPIBench Pre-Commit Security Gate")
+    print(f"{'═'*60}{RST}")
+
+    staged = get_staged_files()
+    if not staged:
+        print(f"\n  {GRN}No staged files — nothing to check.{RST}\n")
+        sys.exit(0)
+
+    print(f"\n  Staged files ({len(staged)}):")
+    for f in staged:
+        print(f"    • {f}")
+
+    check_forbidden_paths(staged)
+    check_data_files(staged)
+    check_secrets_in_content(staged)
+    check_env_example(staged)
+    check_notebooks(staged)
+    check_file_sizes(staged)
+
+    # ── Final verdict ──────────────────────────────────────────────────────────
+    print(f"\n{BLD}{'═'*60}{RST}")
+    if FAILURES:
+        print(f"{RED}{BLD}  ❌ COMMIT BLOCKED — {len(FAILURES)} security check(s) failed:{RST}")
+        for f in FAILURES:
+            print(f"  {RED}  • {f}{RST}")
+        print(f"\n  {YLW}Fix the issues above and try again.{RST}")
+        print(f"  {YLW}To bypass in an emergency: git commit --no-verify  (use with EXTREME caution){RST}")
+        print(f"{BLD}{'═'*60}{RST}\n")
+        sys.exit(1)
+    else:
+        print(f"{GRN}{BLD}  ✅ All security checks passed — commit allowed.{RST}")
+        print(f"{BLD}{'═'*60}{RST}\n")
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
