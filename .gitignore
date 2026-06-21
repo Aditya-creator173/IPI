@@ -1,19 +1,18 @@
-# Python environments
+# ── Python environments ───────────────────────────────────────────────────────
 .venv/
 venv/
 env/
 
-# Secrets and local config
+# ── Secrets — never commit these ─────────────────────────────────────────────
 .env
 .env.*
 !.env.example
 *.key
 *.pem
 *.p12
-*.secrets
 secrets/
 
-# Python cache/build artifacts
+# ── Python cache ──────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.pyo
@@ -25,29 +24,45 @@ dist/
 build/
 *.egg-info/
 
-# Notebook and editor noise
+# ── Jupyter noise ─────────────────────────────────────────────────────────────
 .ipynb_checkpoints/
-.vscode/
 
-# OS noise
+# ── Editor noise ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS noise ──────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Benchmark outputs and local research artifacts
-results.csv
-results/*.csv
-results/jsonl/
-results/csv/
+# ── Benchmark results (large, gitignored — transfer via Drive/Telegram/USB) ──
+# Keep directory structure via .gitkeep; exclude actual data files
+results/csv/*.csv
+results/csv/*.jsonl
+results/jsonl/*.jsonl
+results/jsonl/*.csv
 results/results_final.csv
-!results/jsonl/.gitkeep
+results/results_annotated.csv
 !results/csv/.gitkeep
+!results/jsonl/.gitkeep
+
+# ── Paper build artifacts ─────────────────────────────────────────────────────
 paper/*.aux
 paper/*.log
 paper/*.out
 paper/*.toc
 paper/*.synctex.gz
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.blg
+paper/*.bbl
 
-# Local-only research and sensitive logs (User Eyes Only)
+# ── Local-only research notes (manual testing logs, disclosure drafts) ────────
 LOCAL\ ONLY/
 local_only/
 *_local.*
+manual_testing_log.md
+novel_research_findings.md
+disclosure_drafts/
