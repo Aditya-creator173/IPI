@@ -4,9 +4,6 @@ Provider  : Google AI Studio
 Model ID  : gemma-4-26b-a4b-it
 Rate limit: 1,500 RPD (shared pool)
 Env var   : GOOGLE_API_KEY
-Note      : MoE variant of Gemma 4 — same family as 31B dense but different
-            architecture. Enables within-family architecture comparison:
-            dense vs MoE under identical training and safety approach.
 
 Usage:
     python run_gemma4_26b_moe.py
