@@ -7,11 +7,6 @@ Model ID  : claude-haiku-4-5-20251001
 Rate limit: Depends on credits granted — pace conservatively
 Env var   : ANTHROPIC_API_KEY
 
-Note: Smallest Constitutional AI model in the set.
-      Anchors the Claude family size axis: Haiku → Sonnet → Opus.
-      Constitutional AI paradigm: model reasons about ethical principles
-      rather than pattern-matching human ratings — distinct from RLHF.
-
 Usage:
     python run_claude_haiku.py
     python run_claude_haiku.py --dry-run
