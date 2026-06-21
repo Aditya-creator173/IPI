@@ -4,8 +4,6 @@ Provider  : Google AI Studio
 Model ID  : gemma-4-31b-it
 Rate limit: 1,500 RPD (shared pool with other Google models on same key)
 Env var   : GOOGLE_API_KEY
-Note      : Gemma 4 models accessed via Gemini API using same key.
-            No thinking_level needed — Gemma 4 is not a reasoning model.
 
 Usage:
     python run_gemma4_31b.py
