@@ -16,6 +16,7 @@ Usage:
 
 import os
 import anthropic
+import _core
 from _core import run_benchmark
 
 MODEL_NAME    = "claude_opus"
@@ -35,6 +36,8 @@ def call(prompt: str, system_prompt: str) -> str:
         kwargs["system"] = system_prompt
 
     resp = client.messages.create(**kwargs)
+    _core._call_usage["input_tokens"]  = resp.usage.input_tokens
+    _core._call_usage["output_tokens"] = resp.usage.output_tokens
     return "".join(
         block.text for block in resp.content if hasattr(block, "text")
     )

@@ -13,6 +13,7 @@ while remaining backwards-compatible with a single shared key.
 from __future__ import annotations
 
 import os
+import _core
 from openai import OpenAI
 
 _clients: dict[str, OpenAI] = {}
@@ -74,4 +75,7 @@ def call_openrouter(
             "X-Title":      "IPIBench",
         },
     )
+    if resp.usage:
+        _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
+        _core._call_usage["output_tokens"] = resp.usage.completion_tokens
     return resp.choices[0].message.content

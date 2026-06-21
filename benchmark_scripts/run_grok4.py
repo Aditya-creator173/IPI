@@ -1,25 +1,29 @@
 """
-run_llama33_70b.py  —  LLaMA 3.3 70B via Groq
-Provider : Groq
-Model ID : llama-3.3-70b-versatile
-Rate limit: ~1,000 RPD — run overnight, do not saturate in one session
+run_grok4.py  —  Grok 4 via xAI API
+Provider  : xAI (OpenAI-compatible)
+Model ID  : grok-4  (override via XAI_MODEL_ID)
+Env var   : XAI_API_KEY
+Rate tier : Based on your xAI credit balance.
 
 Usage:
-    python run_llama33_70b.py
-    python run_llama33_70b.py --dry-run
-    python run_llama33_70b.py --validate
+    python run_grok4.py
+    python run_grok4.py --dry-run
+    python run_grok4.py --validate
 """
 
 import os
 import _core
-from groq import Groq
+from openai import OpenAI
 from _core import run_benchmark
 
-MODEL_NAME    = "llama33_70b"
-MODEL_ID      = "llama-3.3-70b-versatile"
-PAUSE_SECONDS = 4.0   # 70B has tighter limits; pace to stay under 1000/day
+MODEL_NAME    = "grok4"
+MODEL_ID      = os.environ.get("XAI_MODEL_ID", "grok-4")
+PAUSE_SECONDS = 2.0
 
-client = Groq(api_key=os.environ["GROQ_API_KEY"])
+client = OpenAI(
+    base_url="https://api.x.ai/v1",
+    api_key=os.environ["XAI_API_KEY"],
+)
 
 
 def call(prompt: str, system_prompt: str) -> str:

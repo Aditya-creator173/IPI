@@ -5,6 +5,7 @@ Uses the google-genai SDK.
 """
 
 import os
+import _core
 from google import genai
 from google.genai import types
 
@@ -46,4 +47,7 @@ def call_google(
         contents=prompt,
         config=config,
     )
+    if resp.usage_metadata:
+        _core._call_usage["input_tokens"]  = resp.usage_metadata.prompt_token_count
+        _core._call_usage["output_tokens"] = resp.usage_metadata.candidates_token_count
     return resp.text

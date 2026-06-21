@@ -45,6 +45,7 @@ results/jsonl/*.jsonl
 results/jsonl/*.csv
 results/results_final.csv
 results/results_annotated.csv
+results/results.csv
 !results/csv/.gitkeep
 !results/jsonl/.gitkeep
 

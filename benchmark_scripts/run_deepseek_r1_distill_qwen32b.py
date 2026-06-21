@@ -11,6 +11,7 @@ Usage:
 """
 
 import os
+import _core
 from groq import Groq
 from _core import run_benchmark
 
@@ -33,6 +34,9 @@ def call(prompt: str, system_prompt: str) -> str:
         temperature=0.6,   # recommended for R1 distill series
         timeout=90,        # reasoning traces can be long
     )
+    if resp.usage:
+        _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
+        _core._call_usage["output_tokens"] = resp.usage.completion_tokens
     return resp.choices[0].message.content
 
 

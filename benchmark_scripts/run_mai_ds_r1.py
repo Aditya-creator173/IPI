@@ -11,6 +11,7 @@ Usage:
 """
 
 import os
+import _core
 from openai import OpenAI
 from _core import run_benchmark
 
@@ -37,6 +38,9 @@ def call(prompt: str, system_prompt: str) -> str:
         temperature=0.6,
         timeout=90,
     )
+    if resp.usage:
+        _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
+        _core._call_usage["output_tokens"] = resp.usage.completion_tokens
     return resp.choices[0].message.content
 
 
