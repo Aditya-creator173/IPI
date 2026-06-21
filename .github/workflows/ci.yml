@@ -1,0 +1,80 @@
+name: IPIBench CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint-and-validate:
+    name: Lint & Schema Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate benchmark JSON schema
+        run: |
+          python - <<'EOF'
+          import json, sys
+          from pathlib import Path
+
+          # Prefer v2, fall back to v1
+          path = Path("benchmark_v2.json")
+          if not path.exists():
+              path = Path("benchmark.json")
+
+          data = json.loads(path.read_text(encoding="utf-8"))
+          assert isinstance(data, list), "benchmark must be a JSON list"
+          assert len(data) > 0, "benchmark must not be empty"
+
+          required_base = {"id", "full_prompt", "attack_success_phrases"}
+          for i, case in enumerate(data):
+              missing = required_base - set(case.keys())
+              assert not missing, f"Case {i} missing fields: {missing}"
+
+          print(f"OK — {path.name}: {len(data)} scenarios validated")
+          EOF
+
+      - name: Secret scan (no real credentials in tracked files)
+        run: |
+          git grep -nE \
+            '(api[_-]?key|apikey|secret|token|password)[[:space:]]*[:=][[:space:]]*["'"'"'][^"'"'"']{8,}["'"'"']|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{20,}|AIza[0-9A-Za-z_-]{20,}' \
+            -- . \
+            ':(exclude).env.example' \
+            ':(exclude)README.md' \
+            && echo "WARNING: Possible credentials found above — review before merging" \
+            && exit 1 \
+            || echo "OK — no credential patterns detected in tracked files"
+
+      - name: Check benchmark_scripts syntax
+        run: |
+          for f in benchmark_scripts/*.py; do
+            python -m py_compile "$f" && echo "OK: $f"
+          done
+
+      - name: Check root scripts syntax
+        run: |
+          for f in run_benchmark.py merge_results.py migrate_benchmark.py; do
+            if [ -f "$f" ]; then
+              python -m py_compile "$f" && echo "OK: $f"
+            fi
+          done
