@@ -122,17 +122,19 @@ jobs:
       - name: High-entropy string scan
         run: |
           pip install -q truffleHog3
+          cat <<'EOF' > /tmp/trufflehog3.yml
+          exclude:
+            - paths:
+                - .env.example
+                - README.md
+                - .gitignore
+                - requirements.txt
+                - .github/**
+                - "*.gitkeep"
+          EOF
           trufflehog3 \
             --no-history \
-            --exclude-paths <(cat <<'EOF'
-          .env.example
-          README.md
-          .gitignore
-          requirements.txt
-          .github/
-          *.gitkeep
-          EOF
-          ) \
+            -c /tmp/trufflehog3.yml \
             filesystem . \
           && echo "✅ truffleHog3: no high-entropy strings detected" \
           || (echo "❌ truffleHog3: high-entropy strings found — review above output" && exit 1)
