@@ -51,7 +51,6 @@ jobs:
             --exclude-files 'requirements.*\.txt$' \
             --exclude-files 'README\.md$' \
             --exclude-files '.*\.gitkeep$' \
-            --baseline /dev/null \
             > /tmp/ds_results.json
           # Parse results — fail if any secrets found
           python - <<'PYEOF'
