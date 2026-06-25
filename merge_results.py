@@ -4,6 +4,8 @@ Merges all per-model CSV files in results/csv/ into results/results_final.csv.
 
 Features:
 - Validates schema consistency across all files
+- Dynamic column union: collects all unique headers across all CSVs, preserves
+  a logical base ordering, and appends any extra columns sorted — no data dropped
 - Deduplicates on (test_id, model_name, defense_mode) — safe to re-run
 - Reports per-model row counts and any schema mismatches
 - Exits with non-zero status on critical errors so CI can catch failures
@@ -19,16 +21,51 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 
+# Minimum fields every benchmark CSV must contain — matches _core.py output
 EXPECTED_FIELDS = {
     "test_id", "model_name", "defense_mode",
-    "attack_goal", "evasion_style", "harm_severity",
     "prompt_sent", "response_received", "response_length_chars",
     "attack_succeeded", "detection_reason", "needs_review",
 }
+
+# Preferred column order for the merged output (extra cols appended sorted)
+_BASE_FIELD_ORDER = [
+    # Benchmark metadata
+    "test_id", "category", "attack_goal", "evasion_style",
+    "injection_position", "authority_claimed", "harm_severity", "persistence",
+    # Execution context
+    "model_name", "defense_mode",
+    # Timing and cost
+    "latency_ms", "input_tokens", "output_tokens",
+    # Scoring
+    "attack_succeeded", "detection_reason", "needs_review",
+    # Semantic / behavioural
+    "semantic_sim_score", "behavioral_signals",
+    # Raw
+    "response_length_chars", "prompt_sent", "response_received",
+]
+
+
+def _build_fieldnames(csv_files: list[Path]) -> list[str]:
+    """
+    Pre-pass: collect union of all column names across all CSVs.
+    Returns a list with base fields ordered first, extras sorted at the end.
+    """
+    all_fields: set[str] = set()
+    for path in csv_files:
+        with path.open("r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            if reader.fieldnames:
+                all_fields.update(reader.fieldnames)
+
+    # Keep base ordering, append any unknown extras sorted
+    ordered = [f for f in _BASE_FIELD_ORDER if f in all_fields]
+    extras  = sorted(all_fields - set(ordered))
+    return ordered + extras
 
 
 def merge(
@@ -44,8 +81,10 @@ def merge(
         print(f"ERROR: No CSV files found in {input_dir}", file=sys.stderr)
         return 0
 
+    # Build the merged fieldname list from a pre-pass over all files
+    fieldnames = _build_fieldnames(csv_files)
+
     all_rows: list[dict] = []
-    fieldnames: list[str] | None = None
     schema_errors: list[str] = []
     per_model_counts: Counter = Counter()
     seen_keys: set[tuple] = set()
@@ -62,16 +101,8 @@ def merge(
 
             file_fields = set(reader.fieldnames)
             missing = EXPECTED_FIELDS - file_fields
-            extra   = file_fields - EXPECTED_FIELDS
-
             if missing:
-                schema_errors.append(f"{path.name}: missing fields {sorted(missing)}")
-            if extra:
-                # Extra fields are fine — newer schema additions
-                pass
-
-            if fieldnames is None:
-                fieldnames = reader.fieldnames
+                schema_errors.append(f"{path.name}: missing required fields {sorted(missing)}")
 
             file_rows = 0
             for row in reader:
@@ -101,8 +132,8 @@ def merge(
     for model, count in sorted(per_model_counts.items()):
         print(f"  {model:<45} {count:>5} rows")
 
-    # Coverage check
-    expected_per_model = 20 * 4  # 20 V1 attacks × 4 defense modes
+    # Coverage check (V1 subset: 20 attacks × 4 defense modes = 80 rows minimum)
+    expected_per_model = 20 * 4
     incomplete = [(m, c) for m, c in per_model_counts.items() if c < expected_per_model]
     if incomplete:
         print(f"\nIncomplete models (< {expected_per_model} rows = still running or partial):")
@@ -113,17 +144,13 @@ def merge(
         print("\n--validate-only: no output written.")
         return len(all_rows)
 
-    if fieldnames is None:
-        print("ERROR: Could not determine field names.", file=sys.stderr)
-        return 0
-
     output_file.parent.mkdir(parents=True, exist_ok=True)
     with output_file.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(all_rows)
 
-    print(f"\nMerged → {output_file}")
+    print(f"\nMerged -> {output_file}")
     return len(all_rows)
 
 
