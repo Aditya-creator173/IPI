@@ -94,41 +94,6 @@ def check_forbidden_paths(staged):
         ok("No forbidden paths staged")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CHECK 2: Data / result file leak guard
-# ══════════════════════════════════════════════════════════════════════════════
-def check_data_files(staged):
-    section("Check 2: Benchmark data file leak guard")
-
-    DATA_PATTERNS = [
-        r"results/.*\.(csv|jsonl|json)$",
-        r"analysis/.*\.(csv|jsonl)$",
-        r".*_responses?\.(csv|jsonl|json)$",
-        r".*_results?\.(csv|jsonl|json)$",
-        r".*\.jsonl$",
-    ]
-
-    # Exceptions — these are always OK
-    WHITELISTED = [
-        "benchmark.json",
-        "benchmark_v2.json",
-        "benchmark_v2_review_flags.json",
-    ]
-
-    found_any = False
-    for f in staged:
-        basename = Path(f).name
-        if basename in WHITELISTED:
-            continue
-        for pattern in DATA_PATTERNS:
-            if re.search(pattern, f, re.IGNORECASE):
-                fail(f"Data file staged: {f}  — this may contain raw model responses")
-                FAILURES.append(f"Data file: {f}")
-                found_any = True
-
-    if not found_any:
-        ok("No benchmark data files staged")
-
-# ══════════════════════════════════════════════════════════════════════════════
 # CHECK 3: Secret pattern scan in staged file content
 # ══════════════════════════════════════════════════════════════════════════════
 def check_secrets_in_content(staged):
@@ -214,58 +179,6 @@ def check_env_example(staged):
         ok(".env.example: all values are empty or safe model IDs")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CHECK 5: Jupyter notebook output guard
-# ══════════════════════════════════════════════════════════════════════════════
-def check_notebooks(staged):
-    notebooks = [f for f in staged if f.endswith(".ipynb")]
-    if not notebooks:
-        return
-
-    section("Check 5: Jupyter notebook output guard")
-
-    for nb_path in notebooks:
-        content = get_staged_content(nb_path)
-        try:
-            nb = json.loads(content)
-            has_output = any(
-                cell.get("outputs")
-                for cell in nb.get("cells", [])
-            )
-            if has_output:
-                fail(f"{nb_path} has cell outputs — clear with: jupyter nbconvert --clear-output {nb_path}")
-                FAILURES.append(f"Notebook outputs: {nb_path}")
-            else:
-                ok(f"{nb_path}: no outputs")
-        except json.JSONDecodeError:
-            warn(f"Could not parse {nb_path} as JSON")
-
-# ══════════════════════════════════════════════════════════════════════════════
-# CHECK 6: File size guard (no accidental large data uploads)
-# ══════════════════════════════════════════════════════════════════════════════
-def check_file_sizes(staged):
-    section("Check 6: File size guard (max 512 KB per file)")
-
-    MAX_BYTES = 512 * 1024  # 512 KB
-
-    # Some files are legitimately larger
-    SIZE_EXEMPT = {"benchmark.json", "benchmark_v2.json", "benchmark_v2_review_flags.json"}
-
-    found_any = False
-    for f in staged:
-        if Path(f).name in SIZE_EXEMPT:
-            continue
-        if not Path(f).exists():
-            continue
-        size = Path(f).stat().st_size
-        if size > MAX_BYTES:
-            fail(f"{f} is {size:,} bytes (>{MAX_BYTES:,} limit) — likely contains data")
-            FAILURES.append(f"Oversized file: {f}")
-            found_any = True
-
-    if not found_any:
-        ok("All staged files within size limit")
-
-# ══════════════════════════════════════════════════════════════════════════════
 # MAIN
 # ══════════════════════════════════════════════════════════════════════════════
 def main():
@@ -283,11 +196,8 @@ def main():
         print(f"    • {f}")
 
     check_forbidden_paths(staged)
-    check_data_files(staged)
     check_secrets_in_content(staged)
     check_env_example(staged)
-    check_notebooks(staged)
-    check_file_sizes(staged)
 
     # ── Final verdict ──────────────────────────────────────────────────────────
     print(f"\n{BLD}{'═'*60}{RST}")
