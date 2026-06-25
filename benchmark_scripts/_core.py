@@ -28,6 +28,13 @@ import time
 from pathlib import Path
 from typing import Callable
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+
 
 # ── Shared usage buffer (populated by model scripts / helpers) ─────────────────
 _call_usage: dict = {}
@@ -284,7 +291,11 @@ def run_benchmark(
                 for row in csv.DictReader(f):
                     tid = row.get("test_id")
                     dm  = row.get("defense_mode")
+                    resp = row.get("response_received", "")
                     if tid and dm:
+                        # Do not count API errors as finished, so they get retried
+                        if resp and resp.startswith("API_ERROR:"):
+                            continue
                         finished_tests.add((tid, dm))
             print(f"Found {len(finished_tests)} existing finished runs. Resuming...")
         except Exception as e:
@@ -326,6 +337,7 @@ def run_benchmark(
                 return True
         return False
 
+    consecutive_failures = 0
     try:
         for defense_mode in modes_to_run:
             for test_case in benchmark_cases:
@@ -350,6 +362,7 @@ def run_benchmark(
                 t0 = time.time()
                 try:
                     response_text = model_call(prompt, system_prompt)
+                    consecutive_failures = 0  # Reset on any successful response
                 except Exception as e:
                     if try_rotate(str(e)):
                         try:
@@ -357,10 +370,22 @@ def run_benchmark(
                             _call_usage.clear()
                             t0 = time.time()
                             response_text = model_call(prompt, system_prompt)
+                            consecutive_failures = 0  # Reset on successful retry
                         except Exception as retry_err:
                             response_text = f"API_ERROR: {str(retry_err)[:200]}"
+                            consecutive_failures += 1
                     else:
                         response_text = f"API_ERROR: {str(e)[:200]}"
+                        consecutive_failures += 1
+
+                # ── Abort on sustained failure ─────────────────────────────────
+                if consecutive_failures >= 5:
+                    raise RuntimeError(
+                        f"\n[ABORT] {consecutive_failures} consecutive API failures. "
+                        "Check your API key, quota, or network connection. "
+                        "Fix the issue and re-run — the runner will resume from the last valid row."
+                    )
+
                 latency_ms    = int((time.time() - t0) * 1000)
                 input_tokens  = _call_usage.get("input_tokens")
                 output_tokens = _call_usage.get("output_tokens")
