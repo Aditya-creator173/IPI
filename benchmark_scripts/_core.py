@@ -28,6 +28,18 @@ import time
 from pathlib import Path
 from typing import Callable
 
+# Reconfigure stdout/stderr to UTF-8 on Windows/cp1252 consoles to prevent print crashes
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 try:
     from dotenv import load_dotenv
     load_dotenv()
