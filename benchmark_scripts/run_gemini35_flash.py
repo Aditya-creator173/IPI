@@ -5,11 +5,16 @@ Model ID  : gemini-3.5-flash
 Rate limit: 1,500 RPD (shared pool across all Google models on same key)
 Env var   : GOOGLE_API_KEY
 
+Research role:
+  Google's closed flagship. Paired with Gemma 4 31B and Gemma 4 26B MoE for
+  open vs closed comparison within same lab. Source of NRF-022 through NRF-028
+  (behavioral probing findings). Upgraded from gemini-3-flash-preview.
+
 Usage:
     python run_gemini35_flash.py
     python run_gemini35_flash.py --dry-run
     python run_gemini35_flash.py --validate
-    python run_gemini35_flash.py --full
+    python run_gemini35_flash.py --v1-only
 """
 
 from _core import run_benchmark
