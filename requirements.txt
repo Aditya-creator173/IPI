@@ -1,30 +1,21 @@
-# IPIBench dependencies
-# Install: pip install -r requirements.txt
-
-# ── API clients ───────────────────────────────────────────────────────────────
+# API clients
 anthropic>=0.40.0
 groq>=0.11.0
 google-genai>=0.8.0
-openai>=1.50.0          # GitHub Models, OpenRouter (both use OpenAI-compatible API)
+openai>=1.50.0
 
-# ── Data and analysis ─────────────────────────────────────────────────────────
+# Data and analysis
 pandas>=2.2.0
 numpy>=1.26.0
-scipy>=1.13.0           # stats tests in analysis.ipynb (pearsonr, ttest)
+scipy>=1.13.0
 matplotlib>=3.9.0
 seaborn>=0.13.0
-sentence-transformers>=3.0.0  # semantic similarity scoring (all-MiniLM-L6-v2)
+sentence-transformers>=3.0.0
 
-# ── Notebook ──────────────────────────────────────────────────────────────────
+# Notebook
 jupyter>=1.1.0
 ipykernel>=6.29.0
 
-# ── Environment and utilities ─────────────────────────────────────────────────
-python-dotenv>=1.0.0    # loads .env file automatically if used
-tqdm>=4.66.0            # optional progress bars in notebook cells
-
-# ── Phase 4: Novel defense implementations (install when needed) ──────────────
-# transformers>=4.40.0            # DistilBERT classifier (Defense 4)
-# torch>=2.3.0                    # required by transformers
-# datasets>=2.19.0                # HuggingFace datasets for classifier training
-# peft>=0.10.0                    # LoRA fine-tuning if needed
+# Environment and utilities
+python-dotenv>=1.0.0
+tqdm>=4.66.0

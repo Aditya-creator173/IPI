@@ -1,9 +1,9 @@
-# ── Python environments ───────────────────────────────────────────────────────
+# Python environments
 .venv/
 venv/
 env/
 
-# ── Secrets — never commit these ─────────────────────────────────────────────
+# Secrets
 .env
 .env.*
 !.env.example
@@ -12,7 +12,7 @@ env/
 *.p12
 secrets/
 
-# ── Python cache ──────────────────────────────────────────────────────────────
+# Python cache
 __pycache__/
 *.py[cod]
 *.pyo
@@ -24,20 +24,20 @@ dist/
 build/
 *.egg-info/
 
-# ── Jupyter noise ─────────────────────────────────────────────────────────────
+# Jupyter noise
 .ipynb_checkpoints/
 
-# ── Editor noise ──────────────────────────────────────────────────────────────
+# Editor noise
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# ── OS noise ──────────────────────────────────────────────────────────────────
+# OS noise
 .DS_Store
 Thumbs.db
 
-# ── Benchmark results (large, gitignored — transfer via Drive/Telegram/USB) ──
+# Benchmark results
 # Keep directory structure via .gitkeep; exclude actual data files
 results/csv/*.csv
 results/csv/*.jsonl
@@ -49,7 +49,7 @@ results/results.csv
 !results/csv/.gitkeep
 !results/jsonl/.gitkeep
 
-# ── Paper build artifacts ─────────────────────────────────────────────────────
+# Paper build artifacts
 paper/*.aux
 paper/*.log
 paper/*.out
@@ -60,7 +60,7 @@ paper/*.fdb_latexmk
 paper/*.blg
 paper/*.bbl
 
-# ── Local-only research notes (manual testing logs, disclosure drafts) ────────
+# Local-only research notes
 LOCAL\ ONLY/
 local_only/
 *_local.*

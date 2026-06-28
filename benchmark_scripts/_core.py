@@ -48,11 +48,11 @@ except ImportError:
 
 
 
-# ── Shared usage buffer (populated by model scripts / helpers) ─────────────────
+# Shared usage buffer (populated by model scripts/helpers)
 _call_usage: dict = {}
 
 
-# ── Benchmark constants ────────────────────────────────────────────────────────
+# Benchmark constants
 DEFENSE_MODES = ["none", "prompt_warning", "spotlighting", "input_filter"]
 
 SUSPICIOUS_KEYWORDS = [
@@ -103,7 +103,7 @@ _HEDGE_PHRASES = [
 ]
 
 
-# ── Semantic similarity (lazy-loaded, optional) ────────────────────────────────
+# Semantic similarity (lazy-loaded, optional)
 _embedder = None
 _embedder_attempted = False
 
@@ -141,7 +141,7 @@ def _semantic_similarity(response_text: str, correct_behavior: str) -> float | N
     return round(float(np.dot(a, b) / denom), 4)
 
 
-# ── Behavioral signal detection ────────────────────────────────────────────────
+# Behavioral signal detection
 def _behavioral_signals(response_text: str) -> dict:
     """
     Detect behavioral patterns in response text.
@@ -160,7 +160,7 @@ def _behavioral_signals(response_text: str) -> dict:
     }
 
 
-# ── Internal helpers ───────────────────────────────────────────────────────────
+# Internal helpers
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
@@ -248,7 +248,7 @@ def _result_paths(model_name: str) -> tuple[Path, Path]:
     return csv_dir / f"{safe}.csv", jsonl_dir / f"{safe}.jsonl"
 
 
-# ── CSV schema ─────────────────────────────────────────────────────────────────
+# CSV schema
 CSV_FIELDNAMES = [
     # Benchmark metadata (denormalized for self-contained analysis)
     "test_id", "category", "attack_goal", "evasion_style",
@@ -268,7 +268,7 @@ CSV_FIELDNAMES = [
 ]
 
 
-# ── Main runner ────────────────────────────────────────────────────────────────
+# Main runner
 def run_benchmark(
     run_name: str,
     model_call: Callable[[str, str], str],
@@ -383,7 +383,7 @@ def run_benchmark(
 
                 print(f"[{call_count}/{total_calls}] {test_id} | {defense_mode}")
 
-                # ── API call with timing ───────────────────────────────────────
+                # API call with timing
                 _call_usage.clear()
                 response_text = None
                 t0 = time.time()
@@ -405,7 +405,7 @@ def run_benchmark(
                         response_text = f"API_ERROR: {str(e)[:200]}"
                         consecutive_failures += 1
 
-                # ── Abort on sustained failure ─────────────────────────────────
+                # Abort on sustained failure
                 if consecutive_failures >= 5:
                     raise RuntimeError(
                         f"\n[ABORT] {consecutive_failures} consecutive API failures. "
@@ -417,7 +417,7 @@ def run_benchmark(
                 input_tokens  = _call_usage.get("input_tokens")
                 output_tokens = _call_usage.get("output_tokens")
 
-                # ── Scoring ───────────────────────────────────────────────────
+                # Scoring
                 succeeded, reason = _check_attack_succeeded(response_text, phrases)
                 signals = _behavioral_signals(response_text)
                 sem_sim = _semantic_similarity(response_text, correct_behavior)
@@ -441,7 +441,7 @@ def run_benchmark(
                 if sem_sim is not None:
                     print(f"  SEM_SIM:  {sem_sim:.4f} | latency: {latency_ms}ms | tokens in/out: {input_tokens}/{output_tokens}")
 
-                # ── Write row ─────────────────────────────────────────────────
+                # Write row
                 row = {
                     # Benchmark metadata
                     "test_id":           test_id,
