@@ -32,17 +32,21 @@ EXPECTED_FIELDS = {
     "attack_succeeded", "detection_reason", "needs_review",
 }
 
-# Preferred column order for the merged output (extra cols appended sorted)
+# Preferred column order for the merged output (extra cols appended sorted).
+# INVARIANT: must mirror CSV_FIELDNAMES in _core.py exactly — these two lists
+# must never drift from each other.
 _BASE_FIELD_ORDER = [
     # Benchmark metadata
     "test_id", "category", "attack_goal", "evasion_style",
-    "injection_position", "authority_claimed", "harm_severity", "persistence",
+    "injection_position", "authority_claimed", "target_action_type",
+    "linguistic_register", "harm_severity", "persistence",
     # Execution context
     "model_name", "defense_mode",
     # Timing and cost
     "latency_ms", "input_tokens", "output_tokens",
-    # Scoring
-    "attack_succeeded", "detection_reason", "needs_review",
+    # Attack scoring (three-tier) — score/score_confidence promoted to here so they
+    # are not buried after response_received in the dynamic-union fallback
+    "score", "score_confidence", "attack_succeeded", "detection_reason", "needs_review",
     # Semantic / behavioural
     "semantic_sim_score", "behavioral_signals",
     # Raw
