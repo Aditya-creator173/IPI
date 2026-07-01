@@ -284,7 +284,8 @@ def _result_paths(model_name: str) -> tuple[Path, Path]:
 CSV_FIELDNAMES = [
     # Benchmark metadata (denormalized for self-contained analysis)
     "test_id", "category", "attack_goal", "evasion_style",
-    "injection_position", "authority_claimed", "harm_severity", "persistence",
+    "injection_position", "authority_claimed", "target_action_type",
+    "linguistic_register", "harm_severity", "persistence",
     # Execution context
     "model_name", "defense_mode",
     # Timing and cost
@@ -377,7 +378,10 @@ def run_benchmark(
             if not client:
                 return False
             base_url = str(getattr(client, "base_url", ""))
-            if "models.inference.ai.azure.com" not in base_url:
+            # Support both the current Azure endpoint and the new models.github.ai
+            # endpoint so that token rotation keeps working during the migration
+            # period. Update _github.py's base_url and this guard in the same commit.
+            if "models.github.ai" not in base_url and "models.inference.ai.azure.com" not in base_url:
                 return False
 
             raw_token = os.environ.get("GITHUB_TOKEN", "")
@@ -449,6 +453,20 @@ def run_benchmark(
                 input_tokens  = _call_usage.get("input_tokens")
                 output_tokens = _call_usage.get("output_tokens")
 
+                # Normalise response_text: translate None / "" into informative sentinel
+                # strings so every downstream path receives a non-None str.
+                #   None  → provider-side content filter fired (finish_reason: "content_filter")
+                #   ""    → model returned zero-length content (distinct event from None)
+                # Both sentinels are < 60 chars of meaningful text, so needs_review=1
+                # is guaranteed. They are also excluded from scoring by scoring_v2.py.
+                if response_text is None:
+                    response_text = (
+                        "PROVIDER_FILTERED: content field was null "
+                        "(likely provider-side content filter)"
+                    )
+                elif response_text == "":
+                    response_text = "EMPTY_RESPONSE: model returned zero-length content"
+
                 # Scoring — PATCH 5: call updated _check_attack_succeeded with extra args
                 injected_text_field = str(test_case.get("injected_text", ""))
                 succeeded, reason, score, score_confidence = _check_attack_succeeded(
@@ -480,34 +498,36 @@ def run_benchmark(
                 # Write row — PATCH 5: includes score and score_confidence
                 row = {
                     # Benchmark metadata
-                    "test_id":            test_id,
-                    "category":           test_case.get("category", ""),
-                    "attack_goal":        test_case.get("attack_goal", ""),
-                    "evasion_style":      test_case.get("evasion_style", ""),
+                    "test_id":             test_id,
+                    "category":            test_case.get("category", ""),
+                    "attack_goal":         test_case.get("attack_goal", ""),
+                    "evasion_style":       test_case.get("evasion_style", ""),
                     "injection_position":  test_case.get("injection_position", ""),
-                    "authority_claimed":  test_case.get("authority_claimed", ""),
-                    "harm_severity":      test_case.get("harm_severity", ""),
-                    "persistence":        test_case.get("persistence", ""),
+                    "authority_claimed":   test_case.get("authority_claimed", ""),
+                    "target_action_type":  test_case.get("target_action_type", ""),
+                    "linguistic_register": test_case.get("linguistic_register", ""),
+                    "harm_severity":       test_case.get("harm_severity", ""),
+                    "persistence":         test_case.get("persistence", ""),
                     # Execution
-                    "model_name":         model_name,
-                    "defense_mode":       defense_mode,
+                    "model_name":          model_name,
+                    "defense_mode":        defense_mode,
                     # Timing and cost
-                    "latency_ms":         latency_ms,
-                    "input_tokens":       input_tokens,
-                    "output_tokens":      output_tokens,
+                    "latency_ms":          latency_ms,
+                    "input_tokens":        input_tokens,
+                    "output_tokens":       output_tokens,
                     # Three-tier scoring
-                    "score":              score,
-                    "score_confidence":   score_confidence,
-                    "attack_succeeded":   succeeded,
-                    "detection_reason":   reason,
-                    "needs_review":       needs_review,
+                    "score":               score,
+                    "score_confidence":    score_confidence,
+                    "attack_succeeded":    succeeded,
+                    "detection_reason":    reason,
+                    "needs_review":        needs_review,
                     # Semantic and behavioral
                     "semantic_sim_score":  sem_sim,
                     "behavioral_signals":  json.dumps(signals),
                     # Raw
                     "response_length_chars": len(response_text),
-                    "prompt_sent":        prompt,
-                    "response_received":  response_text,
+                    "prompt_sent":         prompt,
+                    "response_received":   response_text,
                 }
 
                 csv_writer.writerow(row)
