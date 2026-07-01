@@ -12,36 +12,21 @@ Usage:
     python run_gpt5.py --validate
 """
 
-import os
-import _core
-from openai import OpenAI
 from _core import run_benchmark
+from _github import call_github, client
 
 MODEL_NAME    = "gpt5"
 MODEL_ID      = "gpt-5"
 PAUSE_SECONDS = 8.0
 
-client = OpenAI(
-    base_url="https://models.inference.ai.azure.com",
-    api_key=os.environ["GITHUB_TOKEN"],
-)
-
-
 def call(prompt: str, system_prompt: str) -> str:
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": prompt})
-    resp = client.chat.completions.create(
-        model=MODEL_ID,
-        messages=messages,
-        timeout=60,
-    )
-    if resp.usage:
-        _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
-        _core._call_usage["output_tokens"] = resp.usage.completion_tokens
-    return resp.choices[0].message.content
+    return call_github(MODEL_ID, prompt, system_prompt, timeout=60)
 
 
 if __name__ == "__main__":
+    import sys
+    if not any(f in sys.argv for f in ["--v1-only", "--dry-run", "--validate"]):
+        print("\n[ABORT] GPT-5 has a strict 50 RPD limit. Running the full 400-case benchmark will fail.")
+        print("Please use --v1-only to evaluate the 20-case subset.\n")
+        sys.exit(1)
     run_benchmark(MODEL_NAME, call, MODEL_NAME, PAUSE_SECONDS)
