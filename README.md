@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 
-IPIBench is the **first systematic, cross-architecture benchmark** for evaluating Indirect Prompt Injection (IPI) attacks and defenses in Large Language Model agents.
+IPIBench is a cross-architecture benchmark for evaluating Indirect Prompt Injection (IPI) attacks and defenses in Large Language Model agents — the first of its kind at this scale.
 
 **28 frontier models · 100 attack scenarios · 4 defense modes · 8 classification dimensions**
 
@@ -13,7 +13,7 @@ IPIBench is the **first systematic, cross-architecture benchmark** for evaluatin
 
 ## What Is Indirect Prompt Injection?
 
-When an LLM agent reads external content — webpages, documents, tool outputs — an attacker can embed hidden instructions in that content. The model has no architectural way to distinguish *data it should process* from *commands it should follow*.
+When an LLM agent reads external content — webpages, documents, tool outputs — an attacker can embed hidden instructions in that content. The model has no architectural mechanism to distinguish data it should process from commands it should follow.
 
 ```
 User: "Summarize this article for me."
@@ -24,7 +24,7 @@ Article: [Legitimate text...]
 Agent: [Silently exfiltrates files, returns a normal-looking summary]
 ```
 
-The attack is **silent**, **scalable**, and **deniable** — making it one of the most practical threats to deployed AI agents.
+The user sees a normal response. The attack requires no access to the model, leaves no trace, and scales to every agent that visits the page.
 
 ---
 
@@ -71,8 +71,7 @@ Each attack is tested across 4 defense configurations:
 | `llama4_scout` | Llama 4 Scout (17B MoE 16E) | Groq | MoE (16 experts) | High |
 | `gpt_oss_120b` | GPT-OSS 120B | Groq | MoE Transformer | High |
 | `phi4` | Phi-4 14B | GitHub Models | Dense (Synthetic) | 50 RPD |
-| `mai_ds_r1` | MAI-DS-R1 (DeepSeek R1 + MS Safety FT) | GitHub Models | Reasoning + Safety FT | 50 RPD |
-| `jamba` | AI21 Jamba 1.5 Large | GitHub Models | SSM-Transformer Hybrid | 50 RPD |
+| `github_ds_r1` | DeepSeek R1-0528 | GitHub Models | Reasoning (thinking traces) | 50 RPD |
 | `cohere_command_a` | Cohere Command A | GitHub Models | MoE (Agentic) | 150 RPD |
 | `llama32_3b` | LLaMA 3.2 3B | OpenRouter | Dense Transformer | Free tier |
 | `deepseek_r1` | DeepSeek R1-0528 | OpenRouter | Reasoning (thinking traces) | Free tier |
@@ -121,13 +120,13 @@ Full automated results across all 28 models and 4 defense modes: pending.
 
 ## Selected Novel Research Findings
 
-Beyond pass/fail scoring, manual testing uncovered 28 novel behavioral patterns:
+Manual testing surfaced 28 behavioral patterns that don't show up in pass/fail scoring:
 
-- **NRF-010 — Cross-Lingual Injection Gap:** Hindi injection succeeded on 62.5% of models that blocked the English equivalent. Safety training is predominantly English-calibrated.
-- **NRF-011 — In-Group Authority Bias:** Grok 4 resisted Anthropic impersonation but collapsed to xAI impersonation — an RLHF training artifact where a model over-trusts its own creator's name.
-- **NRF-004 — Stealth Persistence:** Injected counter-questioning behavior was indistinguishable from legitimate financial advising. Standard evaluation cannot detect this without domain-matched follow-up probes.
-- **NRF-026 — Illustrative Echo Vulnerability:** Gemini triggered a live canvas overwrite while *explaining* the exact vulnerability — the rendering pipeline could not distinguish educational quotation from live injection.
-- **NRF-028 — Security Theater Metacognition:** Gemini accurately described every vulnerability it had, named the missing defenses, and simultaneously failed to prevent any of them. Security reasoning and security behavior are independently targetable capabilities.
+- **NRF-010 — Cross-Lingual Injection Gap:** The Hindi variant of a standard injection succeeded on 62.5% of models that had blocked the English version. Safety training is predominantly English-calibrated.
+- **NRF-011 — In-Group Authority Bias:** Grok 4 held against Anthropic impersonation but collapsed when the injected authority claimed to be xAI — consistent with an RLHF artifact where the model treats its own creator's name as a trust signal.
+- **NRF-004 — Stealth Persistence:** The injected counter-questioning behavior in B035 was indistinguishable from legitimate financial advising. Standard evaluation cannot detect this without domain-matched follow-up probes.
+- **NRF-026 — Illustrative Echo Vulnerability:** Gemini triggered a live canvas overwrite while explaining the attack — the rendering pipeline couldn't distinguish educational quotation from live injection.
+- **NRF-028 — Security Theater Metacognition:** Gemini accurately described every vulnerability it had, named the missing defenses, and still failed to prevent any of them. Security reasoning and security behavior are independently targetable.
 
 Full write-ups in `LOCAL ONLY/novel_research_findings.md`.
 
@@ -135,7 +134,7 @@ Full write-ups in `LOCAL ONLY/novel_research_findings.md`.
 
 ## Responsible Disclosure
 
-During benchmark development, production frontier models were found vulnerable to specific attack scenarios. Key findings were responsibly disclosed before any public release:
+During benchmark development, production frontier models were found vulnerable to specific attack scenarios. Key findings were disclosed to each vendor before any public release:
 
 - **Grok 4:** Full tool schema (including `bash`) exfiltrated verbatim via A008. Reported to xAI.
 - **DeepSeek V3:** Two structurally different system prompts leaked across two sessions — confirms A/B routing. Reported to DeepSeek.
