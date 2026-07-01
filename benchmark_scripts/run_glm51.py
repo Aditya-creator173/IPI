@@ -11,36 +11,15 @@ Usage:
 """
 
 import os
-import _core
-from openai import OpenAI
 from _core import run_benchmark
+from _nim import call_nim
 
 MODEL_NAME    = "glm51"
 MODEL_ID      = os.environ.get("NIM_GLM51_MODEL_ID", "z-ai/glm-5.1")
 PAUSE_SECONDS = 2.0
 
-_key = os.environ.get("NVIDIA_KEY_GLM51") or os.environ["NVIDIA_API_KEY"]
-
-client = OpenAI(
-    base_url="https://integrate.api.nvidia.com/v1",
-    api_key=_key,
-)
-
-
 def call(prompt: str, system_prompt: str) -> str:
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": prompt})
-    resp = client.chat.completions.create(
-        model=MODEL_ID,
-        messages=messages,
-        timeout=60,
-    )
-    if resp.usage:
-        _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
-        _core._call_usage["output_tokens"] = resp.usage.completion_tokens
-    return resp.choices[0].message.content
+    return call_nim(MODEL_ID, prompt, system_prompt, model_suffix="GLM51")
 
 
 if __name__ == "__main__":
