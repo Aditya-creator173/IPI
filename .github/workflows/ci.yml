@@ -320,6 +320,9 @@ jobs:
           done
           [ "$FAIL" -eq 0 ] || exit 1
 
+      - name: Run scoring regression tests
+        run: python verify_fixes.py
+
       - name: Check root scripts syntax
         run: |
           FAIL=0
