@@ -10,32 +10,15 @@ Usage:
     python run_gpt_oss_120b.py --validate
 """
 
-import os
-import _core
-from groq import Groq
 from _core import run_benchmark
+from _groq import call_groq
 
 MODEL_NAME    = "gpt_oss_120b"
 MODEL_ID      = "openai/gpt-oss-120b"
 PAUSE_SECONDS = 2.0
 
-client = Groq(api_key=os.environ["GROQ_API_KEY"])
-
-
 def call(prompt: str, system_prompt: str) -> str:
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": prompt})
-    resp = client.chat.completions.create(
-        model=MODEL_ID,
-        messages=messages,
-        timeout=60,
-    )
-    if resp.usage:
-        _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
-        _core._call_usage["output_tokens"] = resp.usage.completion_tokens
-    return resp.choices[0].message.content
+    return call_groq(MODEL_ID, prompt, system_prompt)
 
 
 if __name__ == "__main__":
