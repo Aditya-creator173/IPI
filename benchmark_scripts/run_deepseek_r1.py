@@ -15,7 +15,7 @@ Usage:
 from _core import run_benchmark
 from _openrouter import call_openrouter
 
-MODEL_NAME    = "deepseek_r1_0528"
+MODEL_NAME    = "deepseek_r1"
 MODEL_ID      = "deepseek/deepseek-r1-0528:free"
 PAUSE_SECONDS = 2.0
 
