@@ -1,18 +1,29 @@
 """
-run_claude_haiku.py  —  Claude Haiku via Anthropic API
+[MANUAL ONLY — do not use in automated benchmark runs]
+run_claude_haiku.py  —  Claude Haiku 4.5 via Anthropic API
 Provider  : Anthropic
 Model ID  : claude-haiku-4-5-20251001
             Verify latest at console.anthropic.com/settings/models
-            If 4.8 is available, update MODEL_ID to the 4.8 string.
-Rate limit: Depends on credits granted — pace conservatively
 Env var   : ANTHROPIC_API_KEY
 
-Usage:
-    python run_claude_haiku.py
+Why manual-only:
+  Anthropic models are evaluated via the Claude.ai web interface or the
+  API in dedicated manual sessions, not in the automated benchmark loop.
+  The API key costs real money at scale; manual collection is more
+  deliberate and avoids runaway spend.
+
+  Script is kept on disk so the call() function can be reused for
+  ad-hoc probing sessions or future controlled manual runs.
+
+Research role:
+  Size floor for the Constitutional AI (CAI) family.
+  Anchors the Haiku → Sonnet → Opus capability-size axis.
+
+Usage (manual probe sessions only):
     python run_claude_haiku.py --dry-run
     python run_claude_haiku.py --validate
-    python run_claude_haiku.py --full
 """
+
 
 import os
 import anthropic
