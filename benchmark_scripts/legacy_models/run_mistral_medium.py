@@ -1,14 +1,20 @@
 """
+[RETIRED — use run_mistral_large3.py]
 run_mistral_medium.py  —  Mistral Medium 3.5 128B via NVIDIA NIM
 Provider  : NVIDIA NIM (OpenAI-compatible)
 Model ID  : mistralai/mistral-medium-3.5-128b  (override via NIM_MISTRAL_MEDIUM_MODEL_ID)
 Params    : 128B dense
 Env var   : NVIDIA_KEY_MISTRAL_MEDIUM  (or NVIDIA_API_KEY fallback)
 
+NOTE: Retired in Phase 4 cohort update. Replaced by run_mistral_large3.py
+(Mistral Large 3, ~675B) per the 'each-lab-flagship' principle: the same
+principle that swapped Nemotron Super for Nemotron Ultra now applies here.
+Script retained for historical reference only. Do not use in production runs.
+
 Research role:
   Only European-origin architecture in the benchmark. Built under EU AI Act
-  cultural and regulatory pressure. 128B frontier-tier. Replaces Mistral Small
-  3.1 24B (GitHub Models) — larger model, better provider, same research story.
+  cultural and regulatory pressure. 128B frontier-tier. Replaced by Large 3
+  which is the actual Mistral flagship at the time of Phase 4.
   Tests whether regulatory pressure produces different IPI resistance than
   voluntary safety training.
 
