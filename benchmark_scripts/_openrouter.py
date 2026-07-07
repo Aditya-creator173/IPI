@@ -99,7 +99,20 @@ def call_openrouter(
             if resp.usage:
                 _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
                 _core._call_usage["output_tokens"] = resp.usage.completion_tokens
-            return resp.choices[0].message.content
+
+            # Guard: provider-side content filters set content=None.
+            # Write filter_reason into _call_usage so _core.py can persist
+            # provider-specific diagnostic detail into the CSV filter_reason column.
+            # The definitive sentinel substitution is also applied in _core.py
+            # (covers all providers); this guard is extra defence-in-depth.
+            content = resp.choices[0].message.content
+            if content is None:
+                _core._call_usage["filter_reason"] = (
+                    f"openrouter: content field was null "
+                    f"(finish_reason={resp.choices[0].finish_reason!r})"
+                )
+                return "PROVIDER_FILTERED: content field was null (likely provider-side content filter)"
+            return content
         except APIStatusError as e:
             # Retry on 429 (rate limits) and 5xx (server/concurrency issues)
             if (e.status_code == 429 or e.status_code >= 500) and attempt < max_retries:
