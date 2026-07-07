@@ -7,7 +7,7 @@
 
 IPIBench is a cross-architecture benchmark for evaluating Indirect Prompt Injection (IPI) attacks and defenses in Large Language Model agents — the first of its kind at this scale.
 
-**28 frontier models · 100 attack scenarios · 4 defense modes · 8 classification dimensions**
+**20+ frontier models · 100 attack scenarios · 4 defense modes · 8 classification dimensions**
 
 ---
 
@@ -62,38 +62,63 @@ Each attack is tested across 4 defense configurations:
 
 ## Models
 
-28 frontier models spanning Dense Transformers, Mixture-of-Experts, SSM-Transformer Hybrids, Liquid Neural Networks, and Constitutional AI architectures.
+28 frontier models spanning Dense Transformers, Mixture-of-Experts, SSM-Transformer Hybrids, Liquid Neural Networks, Diffusion LLMs, and Constitutional AI architectures.
 
-| Model Suffix | Full Model Name | Provider | Architecture | Rate Limit / Tier |
-|---|---|---|---|---|
-| `llama3.1_8b` | LLaMA 3.1 8B | Groq | Dense Transformer | High |
-| `llama33_70b` | LLaMA 3.3 70B | Groq | Dense Transformer | High |
-| `llama4_scout` | Llama 4 Scout (17B MoE 16E) | Groq | MoE (16 experts) | High |
-| `gpt_oss_120b` | GPT-OSS 120B | Groq | MoE Transformer | High |
-| `phi4` | Phi-4 14B | GitHub Models | Dense (Synthetic) | 50 RPD |
-| `github_ds_r1` | DeepSeek R1-0528 | GitHub Models | Reasoning (thinking traces) | 50 RPD |
-| `cohere_command_a` | Cohere Command A | GitHub Models | MoE (Agentic) | 150 RPD |
-| `llama32_3b` | LLaMA 3.2 3B | OpenRouter | Dense Transformer | Free tier |
-| `deepseek_r1` | DeepSeek R1-0528 | OpenRouter | Reasoning (thinking traces) | Free tier |
-| `nous_hermes_405b` | Nous Hermes 3 405B | OpenRouter | Dense (Safety-reduced) | Free tier |
-| `liquidai_lfm` | LiquidAI LFM-7B | OpenRouter | Liquid Neural Network | Free tier |
-| `gemini35_flash` | Gemini 3.5 Flash | Google AI | Dense (Proprietary) | 1500 RPD |
-| `gemma4_31b` | Gemma 4 31B | Google AI | Dense (Open) | 1500 RPD |
-| `gemma4_26b_moe` | Gemma 4 26B MoE | Google AI | MoE (Open) | 1500 RPD |
-| `claude_haiku` | Claude Haiku 4.5 | Anthropic | Constitutional AI | Standard |
-| `glm51` | GLM 5.1 | NVIDIA NIM | Dense (CN Independent) | Free tier / 40 RPM |
-| `deepseek_v4_pro` | DeepSeek V4 Pro | NVIDIA NIM | MoE Transformer | Free tier / 40 RPM |
-| `nemotron_ultra` | Nemotron 3 Ultra 550B | NVIDIA NIM | MoE-Mamba Hybrid (550B) | Free tier / 40 RPM |
-| `qwen35_397b` | Qwen 3.5 397B | NVIDIA NIM | MoE Transformer | Free tier / 40 RPM |
-| `mistral_medium` | Mistral Medium 3.5 128B | NVIDIA NIM | Dense Transformer | Free tier / 40 RPM |
-| `sarvam_m` | Sarvam-M 8B | NVIDIA NIM | Dense Transformer | Free tier / 40 RPM |
-| `kimi_k2` | Kimi K2.6 | NVIDIA NIM | MoE (Agentic) | Free tier / 40 RPM |
-| `minimax_m2` | MiniMax M2.7 | NVIDIA NIM | Dense (CN Regional) | Free tier / 40 RPM |
-| `claude_sonnet` | Claude Sonnet 4.6 | claude.ai Pro | Constitutional AI | Manual (Full 100) |
-| `claude_opus` | Claude Opus 4.8 | claude.ai Pro | Constitutional AI | Manual (V1-20 only) |
-| `gpt5` | GPT-5.5 | chatgpt.com | Dense (Proprietary) | Manual (V1-20 only) |
-| `grok4` | Grok 4 | grok.com | Dense (Frontier) | Manual (V1-20 only) |
-| `claude_fable` | Claude Fable 5 | Anthropic | Constitutional AI | Suspended (Export Control) 🚫 |
+**20 confirmed automated · 7 active manual · 1 citation-only · up to 4 pending confirmation**
+
+> Four confirmed controlled pairs isolate single architectural variables: LLaMA 3.1 405B ↔ Nous Hermes 3 405B (safety-reduction FT), DeepSeek R1-0528 ↔ V4-Pro (reasoning-RL), Gemma 4 31B ↔ 26B MoE (dense vs. MoE), GLM 5.1 ↔ 5.2 (generational upgrade, same architecture lineage).
+
+### Automated Cohort (20 confirmed)
+
+| Model | Provider | Architecture | Research Role |
+|---|---|---|---|
+| LLaMA 3.1 8B | Groq | Dense Transformer | Size floor anchor |
+| LLaMA 3.3 70B | Groq | Dense Transformer | Mid-scale dense baseline |
+| Llama 4 Scout 17B 16E | Groq | MoE (16 experts) | Next-gen MoE standalone anchor |
+| GPT-OSS 120B | Groq | MoE Transformer | OpenAI open-weight baseline |
+| LLaMA 3.1 405B | SambaNova | Dense Transformer | **Controlled pair base** for Nous Hermes 3 405B |
+| LLaMA 3.2 3B | OpenRouter | Dense Transformer | Absolute size floor |
+| DeepSeek R1-0528 | OpenRouter | Reasoning (visible CoT) | **Controlled pair** with V4-Pro — reasoning-RL vs instruction-tuned |
+| Nous Hermes 3 405B | OpenRouter | Dense (Safety-reduced FT) | **Controlled pair** with LLaMA 3.1 405B — safety reduction upper bound |
+| LiquidAI LFM-7B | OpenRouter | Liquid Neural Network | Only non-transformer architecture — tests attention-dependence |
+| Gemini 3.5 Flash | Google AI | Dense (Proprietary) | Google closed frontier |
+| Gemma 4 31B | Google AI | Dense (Open) | **Controlled pair** with Gemma 4 26B MoE |
+| Gemma 4 26B MoE | Google AI | MoE (Open) | **Controlled pair** with Gemma 4 31B — dense vs. MoE |
+| GLM 5.1 | NVIDIA NIM | Dense (CN Independent) | **Controlled pair base** for GLM 5.2 — has V1 manual baseline |
+| GLM 5.2 | NVIDIA NIM | Dense (CN Independent) | **Controlled pair** with GLM 5.1 — generational upgrade |
+| DeepSeek V4 Pro | NVIDIA NIM | MoE Transformer | **Controlled pair** with R1-0528 |
+| Nemotron 3 Ultra 550B | NVIDIA NIM | MoE-Mamba Hybrid | Only hardware-vendor-built model |
+| Kimi K2.6 | NVIDIA NIM | MoE (Agentic) | Moonshot AI agentic architecture |
+| MiniMax M2.7 | NVIDIA NIM | Dense (CN Regional) | 5th distinct Chinese lab |
+| Mistral Large 3 (~675B) | NVIDIA NIM | MoE (EU) | Only European-origin architecture |
+| Qwen 3.5 397B | NVIDIA NIM | MoE Transformer | Alibaba open-weight flagship |
+
+### Pending Confirmation
+
+| Model | Provider | Status |
+|---|---|---|
+| Phi-4 14B | GitHub Models | ⚠️ Confirm still live on account |
+| Cohere Command A | GitHub Models | ⚠️ Confirm still live on account |
+| GPT-5 | GitHub Models | ⏳ Purpose vs GPT-5.5 manual needs explicit statement |
+| DiffusionGemma 26B MoE | NVIDIA NIM | ⏳ NIM availability unconfirmed; hypothesis sign-off needed |
+
+### Manual Cohort (active — never automated)
+
+| Model | Provider | Notes |
+|---|---|---|
+| Claude Haiku 4.5 | Anthropic | CAI size floor |
+| Claude Sonnet 4.6 | claude.ai Pro | CAI primary — 0% ASR confirmed |
+| Claude Opus 4.8 | Anthropic | Largest CAI model |
+| Claude Sonnet 5 | claude.ai Pro | Current Anthropic flagship |
+| Grok 4 | xAI (credit) | NRF-003/011 source — manual case studies only |
+| GPT-5.5 | chatgpt.com | Closed frontier ceiling — 0% ASR confirmed |
+| Gemini 3.1 Pro | gemini.google.com | NRF-022–028 source — qualitative case study only |
+
+### Completed / Citation-Only
+
+| Model | Findings |
+|---|---|
+| DeepSeek V3 | NRF-002, 006, 023, 029, 030, 031. No further testing. |
 
 ---
 
@@ -138,7 +163,7 @@ During benchmark development, production frontier models were found vulnerable t
 
 - **Grok 4:** Full tool schema (including `bash`) exfiltrated verbatim via A008. Reported to xAI.
 - **DeepSeek V3:** Two structurally different system prompts leaked across two sessions — confirms A/B routing. Reported to DeepSeek.
-- **Gemini 2.5 Pro:** Live canvas overwrite triggered during a security explanation. Disclosure pending.
+- **Gemini 3.1 Pro:** Live canvas overwrite triggered during a security explanation (NRF-026). Disclosure pending.
 
 ---
 
