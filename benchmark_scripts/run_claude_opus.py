@@ -1,17 +1,22 @@
 """
-run_claude_opus.py  —  Claude Opus via Anthropic API
+[MANUAL ONLY — do not use in automated benchmark runs]
+run_claude_opus.py  —  Claude Opus 4.8 via Anthropic API
 Provider  : Anthropic
 Model ID  : claude-opus-4-8
             Verify at console.anthropic.com/settings/models before running.
             Fallback: claude-opus-4-7 if 4.8 not yet on API.
-Rate limit: Depends on credits — Opus costs most per token, pace carefully
 Env var   : ANTHROPIC_API_KEY
 
-Usage:
-    python run_claude_opus.py
+Why manual-only: see run_claude_haiku.py. Opus is the most expensive
+per-token Anthropic model — automated runs would drain credits fastest.
+
+Research role:
+  Largest CAI model. Tests whether maximum Constitutional AI capability
+  tier improves IPI resistance vs. Haiku and Sonnet.
+
+Usage (manual probe sessions only):
     python run_claude_opus.py --dry-run
     python run_claude_opus.py --validate
-    python run_claude_opus.py --full
 """
 
 import os
