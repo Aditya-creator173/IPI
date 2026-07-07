@@ -1,16 +1,21 @@
 """
-run_claude_sonnet.py  —  Claude Sonnet via Anthropic API
+[MANUAL ONLY — do not use in automated benchmark runs]
+run_claude_sonnet.py  —  Claude Sonnet 4.6 via Anthropic API
 Provider  : Anthropic
 Model ID  : claude-sonnet-4-6
             Verify latest at console.anthropic.com/settings/models
-Rate limit: Depends on credits granted
 Env var   : ANTHROPIC_API_KEY
 
-Usage:
-    python run_claude_sonnet.py
+Why manual-only: see run_claude_haiku.py.
+
+Research role:
+  CAI mid-tier flagship. Baseline model with confirmed 0% ASR in prior
+  manual runs. Historical result anchor for cross-version comparison
+  against Sonnet 5 (latest) and Opus 4.8.
+
+Usage (manual probe sessions only):
     python run_claude_sonnet.py --dry-run
     python run_claude_sonnet.py --validate
-    python run_claude_sonnet.py --full
 """
 
 import os
