@@ -4,6 +4,20 @@ Provider  : OpenRouter
 Model ID  : nousresearch/hermes-3-405b-instruct:free
 Env var   : OPENROUTER_KEY_NOUS_HERMES  (or OPENROUTER_API_KEY fallback)
 
+Research role:
+  Deliberately safety-reduced fine-tune of LLaMA 3.1 405B (Llama 3.1 405B
+  Instruct base, confirmed via Nous Research technical report and HuggingFace
+  model card). Serves as the upper-bound vulnerability ceiling: shows what
+  IPI vulnerability looks like when alignment fine-tuning is stripped away.
+
+  CONTROLLED PAIR with run_llama31_405b.py (SambaNova):
+    - Identical base weights: Meta-Llama-3.1-405B-Instruct
+    - Changed variable: safety-reduction fine-tuning (Hermes) vs. standard
+      Meta RLHF alignment (LLaMA 3.1 405B baseline)
+    - Any vulnerability difference is attributable to fine-tuning, not scale
+
+  Expected to be the most vulnerable model in the benchmark. Results provide
+  the calibration ceiling against which all other models' resistance is compared.
 
 """
 from _core import run_benchmark
