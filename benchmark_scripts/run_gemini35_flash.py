@@ -6,9 +6,16 @@ Rate limit: 1,500 RPD (shared pool across all Google models on same key)
 Env var   : GOOGLE_API_KEY
 
 Research role:
-  Google's closed flagship. Paired with Gemma 4 31B and Gemma 4 26B MoE for
-  open vs closed comparison within same lab. Source of NRF-022 through NRF-028
-  (behavioral probing findings). Upgraded from gemini-3-flash-preview.
+  Google's closed flagship in the automated cohort. Paired with Gemma 4 31B
+  and Gemma 4 26B MoE for open-vs-closed comparison within the same lab.
+  Independent inclusion criterion: closes the Google closed-frontier coverage
+  gap that Gemma 4 (open-weight) cannot fill alone.
+
+  NOTE: NRF-022 through NRF-028 (behavioral probing findings) were produced
+  in a SEPARATE manual session using Gemini 3.1 Pro (web UI, gemini.google.com)
+  with a system prompt sourced from Pliny the Liberator's GitHub repository
+  (Tier 3 community source). Those findings are qualitative case studies,
+  not automated benchmark results, and are NOT attributable to this script.
 
 Usage:
     python run_gemini35_flash.py
