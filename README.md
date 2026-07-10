@@ -139,7 +139,7 @@ Manual baseline evaluation across 8 frontier models on the 20-prompt V1 subset (
 
 Strongest single attack: **A027** (Hindi language bypass) — 62.5% success rate across the cohort.
 
-Full automated results across all 28 models and 4 defense modes: pending.
+Full automated results across the 20 confirmed automated models (plus pending ones if confirmed) and manual results for the manual cohort: pending.
 
 ---
 
