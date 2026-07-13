@@ -65,14 +65,12 @@ We evaluate each attack against 4 distinct configurations:
 
 ## 4. Multi-Tier Provider Framework & Verification Protocol
 
-To prevent evaluation variance stemming from unofficial API aggregators and to verify model identities, IPIBench organizes models into a **Three-Tier Provider Hierarchy**:
+To prevent evaluation variance stemming from unofficial API endpoints and to guarantee model authenticity, IPIBench organizes model inference across two enterprise-grade cloud tiers:
 
-* **Tier A (Canonical Labs)**: Official developer APIs (e.g., Google AI Studio, xAI API, DashScope). Highest trust level.
-* **Tier B (Established Clouds/Aggregators)**: Infrastructure partners with verified provider backends (e.g., GitHub Models via Azure OpenAI, SambaNova Cloud, Groq, OpenRouter, NVIDIA NIM).
-* **Tier C (Promotional/Trial Providers)**: Temporary/promotional endpoints (e.g., TokenBay, AeroLink).
+* **Tier A (Canonical Developer APIs)**: Direct developer interfaces straight from the frontier AI labs (e.g., Google AI Studio, Anthropic API, OpenAI API, xAI API).
+* **Tier B (Enterprise Cloud Platforms)**: Enterprise managed cloud hosting and hyper-scale inference partners (e.g., AWS Bedrock, Azure AI Service, GitHub Models, SambaNova Cloud, Groq, OpenRouter, NVIDIA NIM).
 
-### Verification Protocol
-To ensure scientific validity, all **Tier C** results must undergo a **10-prompt verification suite** before inclusion in published figures. We compare their outputs directly against official web UI references (e.g., chatgpt.com, Claude.ai) at zero cost to ensure no model spoofing or distillation is taking place.
+By conducting runs exclusively over these canonical enterprise channels, we ensure complete model provenance and reproducible safety indicators.
 
 ---
 
@@ -124,12 +122,12 @@ Our cohort features 4 controlled pairs that isolate specific architectural, fine
 
 | Script | Model | Provider / Access | Provider Tier | Research Role / Notes |
 |---|---|---|---|---|
-| `run_claude_haiku.py` | Claude Haiku 4.5 | TokenBay | Tier C | CAI scale floor; verification required |
-| `run_claude_sonnet5.py` | Claude Sonnet 5 | AeroLink | Tier C | CAI flagship; verification required |
-| `run_claude_opus.py` | Claude Opus 4.8 | AeroLink/TokenBay | Tier C | CAI scale ceiling; verification required |
-| `run_claude_fable5.py` | Claude Fable 5 | AeroLink | Tier C | Dual-layer safety model; verification required |
+| `run_claude_haiku.py` | Claude Haiku 4.5 | AWS Bedrock / Anthropic API | Tier A/B | CAI scale floor; verification baseline |
+| `run_claude_sonnet5.py` | Claude Sonnet 5 | AWS Bedrock / Anthropic API | Tier A/B | CAI flagship; primary evaluation model |
+| `run_claude_opus.py` | Claude Opus 4.8 | AWS Bedrock / Anthropic API | Tier A/B | CAI scale ceiling; capability limit anchor |
+| `run_claude_fable5.py` | Claude Fable 5 | AWS Bedrock / Anthropic API | Tier A/B | Dual-layer safety model; internal CAI + output filter |
 | `run_grok4.py` | Grok 4.5 (or Grok 4) | xAI API (Official) | Tier A | Proprietary xAI flagship |
-| `run_gpt55.py` | GPT-5.5 | TokenBay | Tier C | Closed OpenAI flagship; verification required |
+| `run_gpt55.py` | GPT-5.5 | Azure AI / OpenAI API | Tier A/B | Closed OpenAI flagship |
 
 ### Retired Scripts (Saved on disk for historical reference)
 * `run_llama32_3b.py` — Retired (sub-7B models too small for meaningful safety alignment evaluation).
