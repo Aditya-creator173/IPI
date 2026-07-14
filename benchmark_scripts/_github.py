@@ -46,10 +46,7 @@ def call_github(
         _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
         _core._call_usage["output_tokens"] = resp.usage.completion_tokens
 
-    # Guard: provider-side content filters set content=None (finish_reason="content_filter").
-    # Return a sentinel string so _core.py receives a str, not None.
-    # The definitive sentinel substitution is also applied in _core.py (covers all providers);
-    # this guard is an extra defence-in-depth layer at the source.
+    # Handle provider-side content filter (content=None)
     content = resp.choices[0].message.content
     if content is None:
         return "PROVIDER_FILTERED: content field was null (likely provider-side content filter)"
