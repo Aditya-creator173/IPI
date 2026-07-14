@@ -1,5 +1,5 @@
 """
-[MANUAL ONLY — do not use in automated benchmark runs]
+[RETIRED — July 12 2026]
 run_claude_sonnet.py  —  Claude Sonnet 4.6 via Anthropic API
 Provider  : Anthropic
 Model ID  : claude-sonnet-4-6
