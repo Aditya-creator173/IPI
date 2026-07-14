@@ -1,14 +1,6 @@
 """
-_openrouter.py  —  Shared OpenRouter client helper.
-All OpenRouter model scripts import call_openrouter() from here.
-
-Key resolution order (most specific wins):
-  1. OPENROUTER_KEY_<MODEL_SUFFIX>  (e.g. OPENROUTER_KEY_DEEPSEEK_V3)
-  2. OPENROUTER_API_KEY             (fallback — single-key setups)
-
-If model_suffix is not passed explicitly, it is auto-detected from the
-calling script's filename (e.g. run_deepseek_v3.py -> DEEPSEEK_V3).
-This allows per-model key isolation with zero code changes per script.
+Shared OpenRouter client helper.
+Resolves keys automatically based on calling script filename.
 """
 
 from __future__ import annotations
@@ -25,14 +17,7 @@ _clients: dict[str, OpenAI] = {}
 
 
 def _get_key(model_suffix: str | None = None) -> str:
-    """
-    Resolve API key.
-
-    If model_suffix is None, auto-detects from the running script filename:
-        run_deepseek_v3.py  ->  DEEPSEEK_V3  ->  OPENROUTER_KEY_DEEPSEEK_V3
-
-    Falls back to OPENROUTER_API_KEY if no per-model key is found.
-    """
+    """Resolve API key based on explicit suffix or caller filename."""
     if not model_suffix:
         script_name = Path(sys.argv[0]).stem
         if script_name.startswith("run_"):
@@ -100,11 +85,7 @@ def call_openrouter(
                 _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
                 _core._call_usage["output_tokens"] = resp.usage.completion_tokens
 
-            # Guard: provider-side content filters set content=None.
-            # Write filter_reason into _call_usage so _core.py can persist
-            # provider-specific diagnostic detail into the CSV filter_reason column.
-            # The definitive sentinel substitution is also applied in _core.py
-            # (covers all providers); this guard is extra defence-in-depth.
+            # Handle provider-side content filter (content=None)
             content = resp.choices[0].message.content
             if content is None:
                 _core._call_usage["filter_reason"] = (
