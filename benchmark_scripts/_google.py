@@ -51,11 +51,7 @@ def call_google(
         _core._call_usage["input_tokens"]  = resp.usage_metadata.prompt_token_count
         _core._call_usage["output_tokens"] = resp.usage_metadata.candidates_token_count
 
-    # Guard: Gemini can return resp.text as None when content is blocked.
-    # Write filter_reason into _call_usage so _core.py can persist
-    # provider-specific diagnostic detail into the CSV filter_reason column.
-    # The definitive sentinel substitution is also applied in _core.py
-    # (covers all providers); this guard is extra defence-in-depth.
+    # Handle provider-side content filter (text=None)
     text = resp.text
     if text is None:
         candidates = getattr(resp, "candidates", None) or []
