@@ -1,13 +1,6 @@
 """
-_nim.py  —  Shared NVIDIA NIM client helper.
-All NIM model scripts import from here to reduce boilerplate.
-
-Key resolution order (most specific wins):
-  1. NVIDIA_KEY_<MODEL_SUFFIX>  (e.g. NVIDIA_KEY_NEMOTRON_ULTRA)
-  2. NVIDIA_API_KEY             (fallback — single-key setups)
-
-If neither is set, raises EnvironmentError immediately (fail-fast) rather
-than caching OpenAI(api_key="") and producing a silent 401 later.
+Shared NVIDIA NIM client helper.
+Resolves model-specific keys with a fallback to NVIDIA_API_KEY.
 """
 
 from __future__ import annotations
@@ -21,11 +14,7 @@ _clients: dict[str, OpenAI] = {}
 
 
 def _get_key(model_suffix: str) -> str:
-    """
-    Resolve NVIDIA API key. Raises EnvironmentError with an explicit message
-    naming the missing variable(s) if no key is found — avoids the silent
-    OpenAI(api_key="") path that caches a broken client under the "" dict key.
-    """
+    """Resolve NVIDIA API key."""
     key = os.environ.get(f"NVIDIA_KEY_{model_suffix}") or os.environ.get("NVIDIA_API_KEY", "")
     if not key:
         raise EnvironmentError(
@@ -54,14 +43,7 @@ def call_nim(
     max_retries: int = 3,
     initial_backoff: float = 2.0,
 ) -> str:
-    """
-    Call a NIM model with exponential backoff retry on 429/5xx errors.
-
-    NIM has a documented 40 RPM hard cap; transient rate-limit hits should be
-    retried rather than written as API_ERROR rows. Model IDs also drift weekly
-    (see script comments) — 404s are NOT retried (they indicate a stale model
-    ID, not a transient error).
-    """
+    """Call a NIM model with exponential backoff on 429/5xx errors. Do not retry 404s."""
     client = get_client(model_suffix)
     messages = []
     if system_prompt:
@@ -80,11 +62,7 @@ def call_nim(
                 _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
                 _core._call_usage["output_tokens"] = resp.usage.completion_tokens
 
-            # Guard: provider-side content filters set content=None.
-            # Write filter_reason into _call_usage so _core.py can persist
-            # provider-specific diagnostic detail into the CSV filter_reason column.
-            # The definitive sentinel substitution is also applied in _core.py
-            # (covers all providers); this guard is extra defence-in-depth.
+            # Handle provider-side content filter (content=None)
             content = resp.choices[0].message.content
             if content is None:
                 _core._call_usage["filter_reason"] = (
