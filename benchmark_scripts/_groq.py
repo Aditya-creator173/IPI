@@ -31,13 +31,7 @@ def call_groq(
     max_retries: int = 3,
     initial_backoff: float = 2.0,
 ) -> str:
-    """
-    Call a Groq model with exponential backoff retry on 429/5xx errors.
-
-    Groq's free tier has per-model RPM ceilings tighter than the raw RPD
-    figure suggests; transient 429s should be retried rather than written
-    as API_ERROR rows that silently degrade data quality.
-    """
+    """Call a Groq model with exponential backoff on 429/5xx errors."""
     client = get_client()
     messages = []
     if system_prompt:
@@ -56,11 +50,7 @@ def call_groq(
                 _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
                 _core._call_usage["output_tokens"] = resp.usage.completion_tokens
 
-            # Guard: provider-side content filters set content=None.
-            # Write filter_reason into _call_usage so _core.py can persist
-            # provider-specific diagnostic detail into the CSV filter_reason column.
-            # The definitive sentinel substitution is also applied in _core.py
-            # (covers all providers); this guard is extra defence-in-depth.
+            # Handle provider-side content filter (content=None)
             content = resp.choices[0].message.content
             if content is None:
                 _core._call_usage["filter_reason"] = (
