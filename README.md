@@ -227,10 +227,6 @@ git diff --cached --name-only | xargs grep -l "ANTHROPIC_API_KEY" 2>/dev/null
 ## 10. Contributors, Advisors, and Mentors
 
 * **Aditya L** (SRMIST) – First Author, Core Researcher & Pipeline Architect
-* **Dr. Sakthi Ganesh** (SRMIST) – Faculty Co-Author, Methodology & Statistical Advising
-* **Prof. S. Venkatesan** (IIIT Allahabad) – Academic Advisor & Reviewer
-* **Sreekanth Menon** (SVP, Genpact) – Industry Mentor, Platform constraints
-* **Madhan Velumani** (VP, Genpact) – Industry Mentor, Responsible AI deployment
 
 ---
 
@@ -239,7 +235,7 @@ git diff --cached --name-only | xargs grep -l "ANTHROPIC_API_KEY" 2>/dev/null
 ```bibtex
 @misc{ipibench2026,
   title   = {IPIBench: A Cross-Model and Cross-Architecture Benchmark for Indirect Prompt Injection Attacks and Defences in Large Language Models},
-  author  = {Aditya L and Sakthi Ganesh and S. Venkatesan},
+  author  = {Aditya L},
   year    = {2026},
   note    = {arXiv preprint — coming soon},
   url     = {https://github.com/Aditya-creator173/IPI}
