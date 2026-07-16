@@ -80,6 +80,11 @@ def check_forbidden_paths(staged):
         r"manual_testing_log",
         r"novel_research_findings",
         r"disclosure_drafts/",
+        r"conversations/",
+        r"chat_logs/",
+        r"system_prompts/",
+        r"prompts/",
+        r"ai_chats/",
     ]
 
     found_any = False
