@@ -3,7 +3,7 @@ run_phi4.py  —  Phi-4 14B via GitHub Models
 Provider  : GitHub Models (PAT)
 Model ID  : Phi-4
 Rate tier : LOW — 150 RPD, 15 RPM
-Endpoint  : https://models.inference.ai.azure.com
+Endpoint  : https://models.github.ai
 
 Usage:
     python run_phi4.py
