@@ -1,7 +1,5 @@
 # IPIBench: A Cross-Model and Cross-Architecture Indirect Prompt Injection Benchmark
 
-[![HuggingFace](https://img.shields.io/badge/🤗_Dataset-IPIBench-yellow.svg)](https://huggingface.co/datasets/Aditya-creator173/IPIBench)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 
 IPIBench is the first systematic, cross-architecture empirical benchmark for evaluating **Indirect Prompt Injection (IPI)** attacks and defenses in Large Language Model (LLM) agents at this scale.
