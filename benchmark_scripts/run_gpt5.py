@@ -1,15 +1,5 @@
 """
-[RETIRED — July 12 2026]
 run_gpt5.py  —  GPT-5 via GitHub Models
-
-Retired because:
-  - 50 RPD cap forces --v1-only (20 cases only); cannot produce a full result.
-  - Replaced by two-entry strategy:
-      run_gpt4o.py   →  GPT-4o via GitHub Models (150 RPD, full 400-case run, Tier B)
-      run_gpt55.py   →  GPT-5.5 via TokenBay (full run, Tier C, free trial credits)
-    Together these provide the cross-generation OpenAI pair without the rate-limit wall.
-
-  Script kept on disk for historical reference. Do not include in automated benchmark runs.
 
 Original provider  : GitHub Models (PAT)
 Original model ID  : gpt-5
