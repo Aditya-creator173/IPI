@@ -1,6 +1,5 @@
 # IPIBench: A Cross-Model and Cross-Architecture Indirect Prompt Injection Benchmark
 
-[![arXiv](https://img.shields.io/badge/arXiv-cs.CR-b31b1b.svg)](https://arxiv.org)
 [![HuggingFace](https://img.shields.io/badge/🤗_Dataset-IPIBench-yellow.svg)](https://huggingface.co/datasets/Aditya-creator173/IPIBench)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
@@ -63,12 +62,12 @@ We evaluate each attack against 4 distinct configurations:
 
 ---
 
-## 4. Multi-Tier Provider Framework & Verification Protocol
+## 4. Provider Verification Protocol
 
-To prevent evaluation variance stemming from unofficial API endpoints and to guarantee model authenticity, IPIBench organizes model inference across two enterprise-grade cloud tiers:
+To prevent evaluation variance stemming from unofficial API endpoints and to guarantee model authenticity, IPIBench organizes model inference across verified enterprise-grade channels only. For example:
 
-* **Tier A (Canonical Developer APIs)**: Direct developer interfaces straight from the frontier AI labs (e.g., Google AI Studio, Anthropic API, OpenAI API, xAI API).
-* **Tier B (Enterprise Cloud Platforms)**: Enterprise managed cloud hosting and hyper-scale inference partners (e.g., AWS Bedrock, Azure AI Service, GitHub Models, SambaNova Cloud, Groq, OpenRouter, NVIDIA NIM).
+* **AWS Bedrock** — Amazon's own official licensing with Anthropic, not a reseller.
+* **AeroLink** — Unverified third party, excluded.
 
 By conducting runs exclusively over these canonical enterprise channels, we ensure complete model provenance and reproducible safety indicators.
 
@@ -93,45 +92,43 @@ Our cohort features 4 controlled pairs that isolate specific architectural, fine
 
 ### Active Automated Cohort (22 Models)
 
-| Script | Model | Provider | Provider Tier | Research Role |
-|---|---|---|---|---|
-| `run_llama31_8b.py` | LLaMA 3.1 8B | Groq | Tier B | Scale floor anchor; baseline performance |
-| `run_llama33_70b.py` | LLaMA 3.3 70B | Groq | Tier B | Mid-scale dense baseline |
-| `run_llama4_scout.py` | LLaMA 4 Scout (109B) | Groq | Tier B | Next-gen MoE (16 experts) transition anchor |
-| `run_gpt_oss_120b.py` | GPT-OSS 120B | Groq | Tier B | OpenAI open-weight architecture baseline |
-| `run_llama31_405b.py` | LLaMA 3.1 405B | SambaNova Cloud | Tier B | Scale ceiling baseline; **Controlled pair base** |
-| `run_gpt4o.py` | GPT-4o | GitHub Models | Tier B | OpenAI reference baseline (Azure backend) |
-| `run_phi4.py` | Phi-4 (14B) | GitHub Models | Tier B | Synthetic data training evaluation |
-| `run_cohere_command_a.py`| Cohere Command A | GitHub Models | Tier B | RAG-native deployment architecture |
-| `run_deepseek_r1.py` | DeepSeek R1-0528 | OpenRouter | Tier B | Reasoning-RL (visible CoT); **Controlled pair** |
-| `run_nous_hermes_405b.py`| Nous Hermes 3 405B | OpenRouter | Tier B | Vulnerability ceiling; **Controlled pair** |
-| `run_liquidai_lfm.py` | LiquidAI LFM-7B | OpenRouter | Tier B | Non-attention Liquid Neural Network architecture |
-| `run_gemini35_flash.py` | Gemini 3.5 Flash | Google AI Studio | Tier A | Google proprietary closed flagship |
-| `run_gemma4_31b.py` | Gemma 4 31B Dense | Google AI Studio | Tier A | Open dense flagship; **Controlled pair base** |
-| `run_gemma4_26b_moe.py` | Gemma 4 26B MoE | Google AI Studio | Tier A | Open MoE flagship; **Controlled pair** |
-| `run_glm51.py` | GLM 5.1 | NVIDIA NIM | Tier B | CN independent baseline; **Controlled pair base** |
-| `run_glm52.py` | GLM 5.2 | NVIDIA NIM | Tier B | Generational CN upgrade; **Controlled pair** |
-| `run_deepseek_v4_pro.py` | DeepSeek V4 Pro | NVIDIA NIM | Tier B | Flagship instruction-tuned MoE; **Controlled pair** |
-| `run_nemotron_ultra.py` | Nemotron Ultra 550B | NVIDIA NIM | Tier B | Hardware vendor Mamba-Transformer hybrid |
-| `run_kimi_k2.py` | Kimi K2.6 | NVIDIA NIM | Tier B | Moonshot agent-optimized MoE flagship |
-| `run_minimax_m2.py` | MiniMax M2.7 | NVIDIA NIM | Tier B | Softmax-linear hybrid attention model |
-| `run_mistral_large3.py` | Mistral Large 3 (675B) | NVIDIA NIM | Tier B | EU regulatory context MoE flagship |
-| `run_qwen35_397b.py` | Qwen 3.5 397B | NVIDIA NIM | Tier B | Alibaba flagship open-weight MoE |
+| Script | Model | Provider | Research Role |
+|---|---|---|---|
+| `run_llama31_8b.py` | LLaMA 3.1 8B | Groq | Scale floor anchor; baseline performance |
+| `run_llama33_70b.py` | LLaMA 3.3 70B | Groq | Mid-scale dense baseline |
+| `run_llama4_scout.py` | LLaMA 4 Scout (109B) | Groq | Next-gen MoE (16 experts) transition anchor |
+| `run_gpt_oss_120b.py` | GPT-OSS 120B | Groq | OpenAI open-weight architecture baseline |
+| `run_llama31_405b.py` | LLaMA 3.1 405B | SambaNova Cloud | Scale ceiling baseline; **Controlled pair base** |
+| `run_gpt5.py` | GPT-5 | GitHub Models | OpenAI's most recent model with confirmed automated access. |
+| `run_phi4.py` | Phi-4 (14B) | GitHub Models | Synthetic data training evaluation |
+| `run_cohere_command_a.py` | Cohere Command A | GitHub Models | RAG-native deployment architecture |
+| `run_deepseek_r1.py` | DeepSeek R1-0528 | OpenRouter | Reasoning-RL (visible CoT); **Controlled pair** |
+| `run_nous_hermes_405b.py` | Nous Hermes 3 405B | OpenRouter | Vulnerability ceiling; **Controlled pair** |
+| `run_liquidai_lfm.py` | LiquidAI LFM-7B | OpenRouter | Non-attention Liquid Neural Network architecture |
+| `run_gemini35_flash.py` | Gemini 3.5 Flash | Google AI Studio | Google proprietary closed flagship |
+| `run_gemma4_31b.py` | Gemma 4 31B Dense | Google AI Studio | Open dense flagship; **Controlled pair base** |
+| `run_gemma4_26b_moe.py` | Gemma 4 26B MoE | Google AI Studio | Open MoE flagship; **Controlled pair** |
+| `run_glm51.py` | GLM 5.1 | NVIDIA NIM | CN independent baseline; **Controlled pair base** |
+| `run_glm52.py` | GLM 5.2 | NVIDIA NIM | Generational CN upgrade; **Controlled pair** |
+| `run_deepseek_v4_pro.py` | DeepSeek V4 Pro | NVIDIA NIM | Flagship instruction-tuned MoE; **Controlled pair** |
+| `run_nemotron_ultra.py` | Nemotron Ultra 550B | NVIDIA NIM | Hardware vendor Mamba-Transformer hybrid |
+| `run_kimi_k2.py` | Kimi K2.6 | NVIDIA NIM | Moonshot agent-optimized MoE flagship |
+| `run_minimax_m2.py` | MiniMax M2.7 | NVIDIA NIM | Softmax-linear hybrid attention model |
+| `run_mistral_large3.py` | Mistral Large 3 (675B) | NVIDIA NIM | EU regulatory context MoE flagship |
+| `run_qwen35_397b.py` | Qwen 3.5 397B | NVIDIA NIM | Alibaba flagship open-weight MoE |
 
 ### Active Manual / Verification Cohort (6 Models)
 
-| Script | Model | Provider / Access | Provider Tier | Research Role / Notes |
-|---|---|---|---|---|
-| `run_claude_haiku.py` | Claude Haiku 4.5 | AWS Bedrock / Anthropic API | Tier A/B | CAI scale floor; verification baseline |
-| `run_claude_sonnet5.py` | Claude Sonnet 5 | AWS Bedrock / Anthropic API | Tier A/B | CAI flagship; primary evaluation model |
-| `run_claude_opus.py` | Claude Opus 4.8 | AWS Bedrock / Anthropic API | Tier A/B | CAI scale ceiling; capability limit anchor |
-| `run_claude_fable5.py` | Claude Fable 5 | AWS Bedrock / Anthropic API | Tier A/B | Dual-layer safety model; internal CAI + output filter |
-| `run_grok4.py` | Grok 4.5 (or Grok 4) | xAI API (Official) | Tier A | Proprietary xAI flagship |
-| `run_gpt55.py` | GPT-5.5 | Azure AI / OpenAI API | Tier A/B | Closed OpenAI flagship |
+| Script | Model | Provider / Access | Research Role / Notes |
+|---|---|---|---|
+| `run_claude_haiku.py` | Claude Haiku 4.5 | AWS Bedrock / Anthropic API | CAI scale floor; verification baseline |
+| `run_claude_sonnet5.py` | Claude Sonnet 5 | AWS Bedrock / Anthropic API | CAI flagship; primary evaluation model |
+| `run_claude_opus.py` | Claude Opus 4.8 | AWS Bedrock / Anthropic API | CAI scale ceiling; capability limit anchor |
+| `run_claude_fable5.py` | Claude Fable 5 | AWS Bedrock / Anthropic API | Dual-layer safety model; internal CAI + output filter |
+| `run_grok4.py` | Grok 4.5 (or Grok 4) | xAI API (Official) | Proprietary xAI flagship |
+| `run_gpt55.py` | GPT-5.5 | Azure AI / OpenAI API | Closed OpenAI flagship |
 
 ### Retired Scripts (Saved on disk for historical reference)
-* `run_llama32_3b.py` — Retired (sub-7B models too small for meaningful safety alignment evaluation).
-* `run_gpt5.py` — Retired (50 RPD limit prevented complete 400-case runs; replaced by GPT-4o & GPT-5.5).
 * `run_claude_sonnet.py` — Retired (replaced by Claude Sonnet 5).
 * `run_mistral_medium.py` — Retired (superseded by Mistral Large 3).
 * `run_deepseek_r1_distill_qwen32b.py` — Retired (no unique research questions).
@@ -198,13 +195,13 @@ python migrate_benchmark.py
 ### 4. Execute evaluations
 ```bash
 # Dry run: evaluates the first 3 cases with full logs printed
-python benchmark_scripts/run_gpt4o.py --dry-run
+python benchmark_scripts/run_gpt5.py --dry-run
 
 # V1 subset: evaluates the 20 priority benchmark cases across 4 defense modes (80 calls)
-python benchmark_scripts/run_gpt4o.py --v1-only
+python benchmark_scripts/run_gpt5.py --v1-only
 
 # Full run: evaluates all 100 cases across 4 defense modes (400 calls)
-python benchmark_scripts/run_gpt4o.py
+python benchmark_scripts/run_gpt5.py
 ```
 
 ### 5. Merge results
