@@ -2,7 +2,7 @@
 [MANUAL ONLY — do not use in automated benchmark runs]
 run_grok4.py  —  Grok 4 via xAI API
 Provider  : xAI (OpenAI-compatible)
-Model ID  : grok-4  (override via XAI_MODEL_ID)
+Model ID  : grok-4.3  (override via XAI_MODEL_ID)
 Env var   : XAI_API_KEY
 Rate tier : Credit-based — $25 free credit on signup, then paid.
 
@@ -29,7 +29,7 @@ from openai import OpenAI
 from _core import run_benchmark
 
 MODEL_NAME    = "grok4"
-MODEL_ID      = os.environ.get("XAI_MODEL_ID", "grok-4")
+MODEL_ID      = os.environ.get("XAI_MODEL_ID", "grok-4.3")
 PAUSE_SECONDS = 2.0
 
 client = OpenAI(
