@@ -67,3 +67,10 @@ local_only/
 manual_testing_log.md
 novel_research_findings.md
 disclosure_drafts/
+
+# AI transcripts and private prompt data (Triple-layer security)
+conversations/
+chat_logs/
+system_prompts/
+prompts/
+ai_chats/
