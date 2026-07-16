@@ -21,7 +21,7 @@ Each attack scenario is evaluated against four structural defense modes. The bas
 ## 4. Experimental Setup
 To ensure evaluation reliability and provenance, inference is restricted to verified enterprise API channels (such as AWS Bedrock, GitHub Models, and NVIDIA NIM). Unofficial endpoints and third-party resellers are excluded.
 
-The evaluation cohort includes 28 models. It features four controlled pairs designed to isolate specific architectural and alignment variables. These isolate the effect of deliberate safety removal (LLaMA 3.1 405B vs. Nous Hermes 3 405B), the impact of visible chain-of-thought traces on security (DeepSeek R1 vs. DeepSeek V4 Pro), the transition from dense to mixture-of-experts (Gemma 4 31B Dense vs. Gemma 4 26B MoE), and capability enhancements across consecutive model releases (GLM 5.1 vs. GLM 5.2).
+The evaluation cohort includes 28 models. The dataset incorporates multiple controlled evaluation pairs designed to isolate specific architectural and alignment variables. This approach facilitates rigorous ablation studies analyzing the effects of deliberate safety removal, reasoning trace visibility, mixture-of-experts transitions, and generational capability enhancements.
 
 The execution architecture processes these evaluations through a custom pipeline that tracks 14 execution metrics per run. These include latency, token consumption, semantic similarity scores computed via sentence-transformers, and quantitative compliance flags.
 
