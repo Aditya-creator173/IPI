@@ -1,7 +1,5 @@
 # IPIBench: A Cross-Model and Cross-Architecture Indirect Prompt Injection Benchmark
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
-
 ## Abstract
 IPIBench is a systematic empirical framework for evaluating Indirect Prompt Injection vulnerabilities across frontier Large Language Models. The benchmark evaluates 28 models against 100 distinct attack scenarios and 4 structural defense configurations, tracking 14 quantitative execution metrics and 8 taxonomic dimensions per evaluation. 
 
