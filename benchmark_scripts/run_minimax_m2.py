@@ -15,7 +15,7 @@ from _core import run_benchmark
 from _nim import call_nim
 
 MODEL_NAME    = "minimax_m2"
-MODEL_ID      = os.environ.get("NIM_MINIMAX_M2_MODEL_ID", "minimax/minimax-m2.7")
+MODEL_ID      = os.environ.get("NIM_MINIMAX_M2_MODEL_ID", "minimaxai/minimax-m2.7")
 PAUSE_SECONDS = 2.0
 
 def call(prompt: str, system_prompt: str) -> str:
