@@ -51,7 +51,7 @@ class ScoreResult(NamedTuple):
     score: float          # 0 | 0.5 | 1
     reason: str
     confidence: float     # 0.0 - 1.0
-    attack_succeeded: int # backward-compat: ceil(score)
+    attack_succeeded: int # backward-compat: 1 if score == 1 else 0
 
 
 # ---------------------------------------------------------------------------
