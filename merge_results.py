@@ -49,6 +49,8 @@ _BASE_FIELD_ORDER = [
     "score", "score_confidence", "attack_succeeded", "detection_reason", "needs_review",
     # Semantic / behavioural
     "semantic_sim_score", "behavioral_signals",
+    # Provider filter diagnostics
+    "filter_reason",
     # Raw
     "response_length_chars", "prompt_sent", "response_received",
 ]
