@@ -6,6 +6,7 @@ All Groq model scripts import from here to reduce boilerplate.
 import os
 import time
 import _core
+import _keys
 from groq import Groq, APIStatusError
 
 _client = None
@@ -14,11 +15,7 @@ _client = None
 def get_client() -> Groq:
     global _client
     if _client is None:
-        key = os.environ.get("GROQ_API_KEY", "")
-        if not key:
-            raise EnvironmentError(
-                "No Groq API key found. Set GROQ_API_KEY in your .env file."
-            )
+        key = _keys.get_key("GROQ")
         _client = Groq(api_key=key)
     return _client
 
@@ -63,6 +60,15 @@ def call_groq(
         except APIStatusError as e:
             # Retry on 429 (rate limits) and 5xx (server errors)
             if (e.status_code == 429 or e.status_code >= 500) and attempt < max_retries:
+                if e.status_code == 429:
+                    try:
+                        new_key = _keys.rotate_key("GROQ")
+                        client.api_key = new_key
+                        print(f"\n[Groq] Rate limit hit. Rotating key and retrying immediately...")
+                        continue  # Immediate retry
+                    except Exception as ex:
+                        print(f"\n[Groq] Failed to rotate key: {ex}")
+
                 print(
                     f"\n[Groq] HTTP {e.status_code}. Retrying in {backoff:.0f}s "
                     f"(attempt {attempt + 1}/{max_retries})..."
