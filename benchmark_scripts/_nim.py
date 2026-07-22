@@ -5,27 +5,16 @@ Resolves model-specific keys with a fallback to NVIDIA_API_KEY.
 
 from __future__ import annotations
 
-import os
 import time
 import _core
+import _keys
 from openai import OpenAI, APIStatusError
 
 _clients: dict[str, OpenAI] = {}
 
 
-def _get_key(model_suffix: str) -> str:
-    """Resolve NVIDIA API key."""
-    key = os.environ.get(f"NVIDIA_KEY_{model_suffix}") or os.environ.get("NVIDIA_API_KEY", "")
-    if not key:
-        raise EnvironmentError(
-            f"No NVIDIA API key found. Set NVIDIA_KEY_{model_suffix} or "
-            "NVIDIA_API_KEY in your .env file."
-        )
-    return key
-
-
-def get_client(model_suffix: str) -> OpenAI:
-    key = _get_key(model_suffix)
+def get_client() -> OpenAI:
+    key = _keys.get_key("NVIDIA")
     if key not in _clients:
         _clients[key] = OpenAI(
             base_url="https://integrate.api.nvidia.com/v1",
@@ -38,13 +27,13 @@ def call_nim(
     model_id: str,
     prompt: str,
     system_prompt: str,
-    model_suffix: str,
+    model_suffix: str, # Kept for backward compatibility
     timeout: int = 60,
     max_retries: int = 3,
     initial_backoff: float = 2.0,
 ) -> str:
     """Call a NIM model with exponential backoff on 429/5xx errors. Do not retry 404s."""
-    client = get_client(model_suffix)
+    client = get_client()
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
@@ -76,6 +65,15 @@ def call_nim(
             # Retry on 429 (rate limits) and 5xx (server errors).
             # Do NOT retry 404 — stale model IDs should surface immediately.
             if (e.status_code == 429 or e.status_code >= 500) and attempt < max_retries:
+                if e.status_code == 429:
+                    try:
+                        new_key = _keys.rotate_key("NVIDIA")
+                        client = get_client()
+                        print(f"\n[NIM] Rate limit hit. Rotating key and retrying immediately...")
+                        continue
+                    except Exception as ex:
+                        print(f"\n[NIM] Failed to rotate key: {ex}")
+
                 print(
                     f"\n[NIM] HTTP {e.status_code}. Retrying in {backoff:.0f}s "
                     f"(attempt {attempt + 1}/{max_retries})..."
