@@ -1,8 +1,8 @@
 """
-run_llama4_scout.py  —  Llama 4 Scout 17B 16E via Groq
-Provider : Groq
-Model ID : meta-llama/llama-4-scout-17b-16e-instruct
-Rate limit: Check console.groq.com — MoE model, limits vary
+run_llama4_scout.py  —  Llama 4 Scout via GitHub Models
+Provider  : GitHub Models (PAT)
+Model ID  : Llama-4-Scout-17B-16E
+Rate tier : LOW — 150 RPD, 15 RPM
 
 Usage:
     python run_llama4_scout.py
@@ -11,14 +11,14 @@ Usage:
 """
 
 from _core import run_benchmark
-from _groq import call_groq
+from _github import call_github
 
 MODEL_NAME    = "llama4_scout"
-MODEL_ID      = "meta-llama/llama-4-scout-17b-16e-instruct"
-PAUSE_SECONDS = 2.0
+MODEL_ID      = "Llama-4-Scout-17B-16E"
+PAUSE_SECONDS = 6.5
 
 def call(prompt: str, system_prompt: str) -> str:
-    return call_groq(MODEL_ID, prompt, system_prompt)
+    return call_github(MODEL_ID, prompt, system_prompt, timeout=60)
 
 
 if __name__ == "__main__":
