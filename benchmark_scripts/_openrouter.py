@@ -11,34 +11,14 @@ import time
 from pathlib import Path
 
 import _core
+import _keys
 from openai import OpenAI, APIStatusError
 
 _clients: dict[str, OpenAI] = {}
 
 
-def _get_key(model_suffix: str | None = None) -> str:
-    """Resolve API key based on explicit suffix or caller filename."""
-    if not model_suffix:
-        script_name = Path(sys.argv[0]).stem
-        if script_name.startswith("run_"):
-            model_suffix = script_name[4:].upper()  # e.g. "DEEPSEEK_V3"
-
-    if model_suffix:
-        specific = os.environ.get(f"OPENROUTER_KEY_{model_suffix.upper()}")
-        if specific:
-            return specific
-
-    generic = os.environ.get("OPENROUTER_API_KEY", "")
-    if not generic:
-        raise EnvironmentError(
-            "No OpenRouter API key found. Set OPENROUTER_API_KEY or "
-            f"OPENROUTER_KEY_{(model_suffix or 'MODEL').upper()} in your .env file."
-        )
-    return generic
-
-
-def get_client(model_suffix: str | None = None) -> OpenAI:
-    key = _get_key(model_suffix)
+def get_client() -> OpenAI:
+    key = _keys.get_key("OPENROUTER")
     # Cache client per key — avoids re-initialising on every call
     if key not in _clients:
         _clients[key] = OpenAI(
@@ -52,18 +32,15 @@ def call_openrouter(
     model_id: str,
     prompt: str,
     system_prompt: str,
-    model_suffix: str | None = None,
+    model_suffix: str | None = None, # Kept for backward compatibility
     timeout: int = 90,
     max_retries: int = 3,
     initial_backoff: float = 2.0,
 ) -> str:
     """
     Call an OpenRouter model with exponential backoff retry on 429/5xx errors.
-
-    model_suffix: uppercase suffix matching the env var, e.g. "DEEPSEEK_V3".
-    If None, auto-detected from the calling script's filename.
     """
-    client = get_client(model_suffix)
+    client = get_client()
     messages: list[dict] = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
@@ -97,6 +74,14 @@ def call_openrouter(
         except APIStatusError as e:
             # Retry on 429 (rate limits) and 5xx (server/concurrency issues)
             if (e.status_code == 429 or e.status_code >= 500) and attempt < max_retries:
+                if e.status_code == 429:
+                    try:
+                        new_key = _keys.rotate_key("OPENROUTER")
+                        client = get_client()
+                        print(f"\n[OpenRouter] Rate limit hit. Rotating key and retrying immediately...")
+                        continue
+                    except Exception as ex:
+                        print(f"\n[OpenRouter] Failed to rotate key: {ex}")
                 print(f"\n[OpenRouter] HTTP {e.status_code}. Retrying in {backoff:.0f}s "
                       f"(attempt {attempt + 1}/{max_retries})...")
                 time.sleep(backoff)
