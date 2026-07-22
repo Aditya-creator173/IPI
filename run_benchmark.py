@@ -135,7 +135,7 @@ def call_gemini(client, prompt: str, system_prompt: str) -> str:
     full_prompt = f"{system_prompt}\n\n---\n\n{prompt}" if system_prompt else prompt
     try:
         resp = client.models.generate_content(
-            model="gemini-3-flash-preview",   # updated from deprecated gemini-2.0-flash
+            model="gemini-3.5-flash",   # updated to match current cohort flagship
             contents=full_prompt,
         )
         return resp.text.strip()
