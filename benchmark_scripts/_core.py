@@ -347,6 +347,17 @@ def run_benchmark(
     csv_path, jsonl_path = _result_paths(model_name)
     file_exists = csv_path.exists() and csv_path.stat().st_size > 0
 
+    if file_exists:
+        with csv_path.open("r", encoding="utf-8") as f:
+            first_line = f.readline().strip()
+            expected_header = ",".join(CSV_FIELDNAMES)
+            if first_line and first_line != expected_header:
+                raise RuntimeError(
+                    f"CSV header mismatch in {csv_path.name}. "
+                    "The file was created with an older schema. "
+                    "Please migrate or delete the file before continuing."
+                )
+
     # Resume support — load already-completed (test_id, defense_mode) pairs
     finished_tests: set = set()
     if file_exists:
@@ -379,36 +390,7 @@ def run_benchmark(
     print(f"Output CSV:  {csv_path}")
     print(f"Output JSONL: {jsonl_path}")
 
-    def try_rotate(err_msg: str) -> bool:
-        """Attempt GitHub token rotation on 429 / rate-limit errors."""
-        e_lower = err_msg.lower()
-        if "429" in e_lower or "rate limit" in e_lower or "quota" in e_lower:
-            model_globals = getattr(model_call, "__globals__", {})
-            client = model_globals.get("client")
-            if not client:
-                return False
-            base_url = str(getattr(client, "base_url", ""))
-            # Support both the current Azure endpoint and the new models.github.ai
-            # endpoint so that token rotation keeps working during the migration
-            # period. Update _github.py's base_url and this guard in the same commit.
-            if "models.github.ai" not in base_url and "models.inference.ai.azure.com" not in base_url:
-                return False
 
-            raw_token = os.environ.get("GITHUB_TOKEN", "")
-            if not raw_token:
-                return False
-            tokens = [t.strip() for t in raw_token.split(",") if t.strip()]
-            if len(tokens) <= 1:
-                return False
-            if not hasattr(run_benchmark, "github_token_idx"):
-                run_benchmark.github_token_idx = 0
-            run_benchmark.github_token_idx = (run_benchmark.github_token_idx + 1) % len(tokens)
-            new_token = tokens[run_benchmark.github_token_idx]
-            if hasattr(client, "api_key"):
-                client.api_key = new_token
-                print(f"\n[Token Rotation] GitHub token limit hit. Rotating to token index {run_benchmark.github_token_idx}...")
-                return True
-        return False
 
     consecutive_failures = 0
     try:
@@ -437,27 +419,14 @@ def run_benchmark(
                     response_text = model_call(prompt, system_prompt)
                     consecutive_failures = 0  # Reset on any successful response
                 except Exception as e:
-                    if try_rotate(str(e)):
-                        try:
-                            print("Retrying API call with rotated token...")
-                            _call_usage.clear()
-                            t0 = time.time()
-                            response_text = model_call(prompt, system_prompt)
-                            consecutive_failures = 0  # Reset on successful retry
-                        except Exception as retry_err:
-                            response_text = f"API_ERROR: {str(retry_err)[:200]}"
-                            consecutive_failures += 1
-                    else:
-                        response_text = f"API_ERROR: {str(e)[:200]}"
-                        consecutive_failures += 1
+                    response_text = f"API_ERROR: {str(e)[:200]}"
+                    consecutive_failures += 1
 
-                # Abort on sustained failure
+                # Self-healing backoff on sustained failure (rate limits / quota exhaustion)
                 if consecutive_failures >= 5:
-                    raise RuntimeError(
-                        f"\n[ABORT] {consecutive_failures} consecutive API failures. "
-                        "Check your API key, quota, or network connection. "
-                        "Fix the issue and re-run — the runner will resume from the last valid row."
-                    )
+                    print(f"\n[QUOTA BACKOFF] 5 consecutive API failures. Pausing 60s for quota reset before retrying...")
+                    time.sleep(60)
+                    consecutive_failures = 0
 
                 latency_ms    = int((time.time() - t0) * 1000)
                 input_tokens  = _call_usage.get("input_tokens")
@@ -543,6 +512,15 @@ def run_benchmark(
                     "prompt_sent":         prompt,
                     "response_received":   response_text,
                 }
+
+                # CRITICAL: Never write API errors into the dataset.
+                # Skipping the row leaves it as "unfinished" so the resume
+                # logic will retry it on the next run with a fresh key.
+                if response_text.startswith("API_ERROR:"):
+                    print(f"  [SKIP] API error — row NOT written to CSV, will retry on resume.")
+                    if pause_seconds > 0:
+                        time.sleep(pause_seconds)
+                    continue
 
                 csv_writer.writerow(row)
                 csv_file.flush()
