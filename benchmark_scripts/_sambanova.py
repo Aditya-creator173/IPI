@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import time
 import _core
+import _keys
 from openai import OpenAI, APIStatusError
 
 _client: OpenAI | None = None
@@ -15,12 +16,7 @@ _client: OpenAI | None = None
 def get_client() -> OpenAI:
     global _client
     if _client is None:
-        key = os.environ.get("SAMBANOVA_API_KEY", "")
-        if not key:
-            raise EnvironmentError(
-                "SAMBANOVA_API_KEY not set. Create a free account at cloud.sambanova.ai "
-                "and add the key to your .env file."
-            )
+        key = _keys.get_key("SAMBANOVA")
         _client = OpenAI(
             base_url="https://api.sambanova.ai/v1",
             api_key=key,
@@ -66,6 +62,17 @@ def call_sambanova(
 
         except APIStatusError as e:
             if (e.status_code == 429 or e.status_code >= 500) and attempt < max_retries:
+                if e.status_code == 429:
+                    try:
+                        new_key = _keys.rotate_key("SAMBANOVA")
+                        global _client
+                        _client = None  # Force re-initialization
+                        client = get_client()
+                        print(f"\n[SambaNova] Rate limit hit. Rotating key and retrying immediately...")
+                        continue
+                    except Exception as ex:
+                        print(f"\n[SambaNova] Failed to rotate key: {ex}")
+
                 print(
                     f"\n[SambaNova] HTTP {e.status_code}. Retrying in {backoff:.0f}s "
                     f"(attempt {attempt + 1}/{max_retries})..."
