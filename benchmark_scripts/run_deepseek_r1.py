@@ -1,28 +1,24 @@
 """
-run_deepseek_r1_0528.py  —  DeepSeek R1-0528 via OpenRouter
-Provider  : OpenRouter
-Model ID  : deepseek/deepseek-r1-0528:free
-Rate limit: 50 RPD free / 1,000 RPD with $10 credit
-Env var   : OPENROUTER_API_KEY
+run_deepseek_r1.py  —  DeepSeek R1 via GitHub Models
+Provider  : GitHub Models (PAT)
+Model ID  : DeepSeek-R1
+Rate tier : LOW — 150 RPD / 50 RPD
 
 Usage:
-    python run_deepseek_r1_0528.py
-    python run_deepseek_r1_0528.py --dry-run
-    python run_deepseek_r1_0528.py --validate
-    python run_deepseek_r1_0528.py --full
+    python run_deepseek_r1.py
+    python run_deepseek_r1.py --dry-run
+    python run_deepseek_r1.py --validate
 """
 
 from _core import run_benchmark
-from _openrouter import call_openrouter
+from _github import call_github
 
 MODEL_NAME    = "deepseek_r1"
-MODEL_ID      = "deepseek/deepseek-r1-0528:free"
-PAUSE_SECONDS = 2.0
-
+MODEL_ID      = "DeepSeek-R1"
+PAUSE_SECONDS = 6.5  # To respect 15 RPM GitHub limits
 
 def call(prompt: str, system_prompt: str) -> str:
-    return call_openrouter(MODEL_ID, prompt, system_prompt, model_suffix="DEEPSEEK_R1_0528")
-
+    return call_github(MODEL_ID, prompt, system_prompt, timeout=90)
 
 if __name__ == "__main__":
     run_benchmark(MODEL_NAME, call, MODEL_NAME, PAUSE_SECONDS)
