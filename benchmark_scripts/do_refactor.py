@@ -3,7 +3,7 @@ from pathlib import Path
 import re
 
 def refactor():
-    base_dir = Path("d:/Personal Projects/ipi-benchmark/benchmark_scripts")
+    base_dir = Path(__file__).resolve().parent
     
     # -------------------------------------------------------------
     # NIM Refactoring
