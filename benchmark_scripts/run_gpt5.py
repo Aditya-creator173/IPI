@@ -1,9 +1,9 @@
 """
 run_gpt5.py  —  GPT-5 via GitHub Models
 
-Original provider  : GitHub Models (PAT)
-Original model ID  : gpt-5
-Original rate tier : HIGH — 50 RPD, 10 RPM
+Provider  : GitHub Models (PAT)
+Model ID  : gpt-5
+Rate tier : HIGH — 50 RPD, 10 RPM
 """
 
 from _core import run_benchmark
