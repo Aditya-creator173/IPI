@@ -1,5 +1,5 @@
 import json
-with open('benchmark.json', 'r', encoding='utf-8') as f:
+with open('benchmark_v2.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 targets = ['C021', 'C025', 'C027', 'C030']
 for item in data:
