@@ -365,7 +365,7 @@ def run_benchmark(
             with csv_path.open("r", encoding="utf-8") as f:
                 for row in csv.DictReader(f):
                     tid = row.get("test_id")
-                    dm  = row.get("defense_mode")
+                    dm  = str(row.get("defense_mode", "")).strip().lower()
                     resp = row.get("response_received", "")
                     if tid and dm:
                         # Do not count API errors as finished, so they get retried
