@@ -15,14 +15,14 @@
       "model_name": "glm52",
       "display_name": "GLM-5.2",
       "model_id": "z-ai/glm-5.2",
-      "lab": "Zhipu AI (\u667a\u8c31AI)",
+      "lab": "Zhipu AI (智谱AI)",
       "lab_country": "CN",
       "provider": "NVIDIA NIM",
       "provider_tier": "B",
       "api_style": "OpenAI-compatible",
       "script": "run_glm52.py",
       "env_var": "NVIDIA_KEY_GLM52",
-      "research_role": "Controlled pair UPDATED \u2014 GLM generational alignment (5.1 vs 5.2)",
+      "research_role": "Controlled pair UPDATED — GLM generational alignment (5.1 vs 5.2)",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -37,7 +37,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_deepseek_r1.py",
       "env_var": "GITHUB_TOKEN",
-      "research_role": "RL-dominant training (multi-stage SFT+GRPO, NOT zero-human-labels \u2014 cite arXiv 2501.12948)",
+      "research_role": "RL-dominant training (multi-stage SFT+GRPO, NOT zero-human-labels — cite arXiv 2501.12948)",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -52,7 +52,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_deepseek_v4_pro.py",
       "env_var": "NVIDIA_KEY_DEEPSEEK_V4_PRO",
-      "research_role": "Controlled pair with R1 \u2014 general RLHF vs RL-dominant training",
+      "research_role": "Controlled pair with R1 — general RLHF vs RL-dominant training",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -60,14 +60,14 @@
       "model_name": "kimi_k2",
       "display_name": "Kimi K2.6",
       "model_id": "moonshotai/kimi-k2.6",
-      "lab": "Moonshot AI (\u6708\u4e4b\u6697\u9762)",
+      "lab": "Moonshot AI (月之暗面)",
       "lab_country": "CN",
       "provider": "NVIDIA NIM",
       "provider_tier": "B",
       "api_style": "OpenAI-compatible",
       "script": "run_kimi_k2.py",
       "env_var": "NVIDIA_KEY_KIMI_K2",
-      "research_role": "Agentic compliance hypothesis \u2014 agent-optimized instruction following vs IPI resistance",
+      "research_role": "Agentic compliance hypothesis — agent-optimized instruction following vs IPI resistance",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -75,14 +75,14 @@
       "model_name": "minimax_m2",
       "display_name": "MiniMax-M2.7",
       "model_id": "minimax/minimax-m2.7",
-      "lab": "MiniMax (\u7a00\u5b87\u79d1\u6280)",
+      "lab": "MiniMax (稀宇科技)",
       "lab_country": "CN",
       "provider": "NVIDIA NIM",
       "provider_tier": "B",
       "api_style": "OpenAI-compatible",
       "script": "run_minimax_m2.py",
       "env_var": "NVIDIA_KEY_MINIMAX_M2",
-      "research_role": "Hybrid attention (softmax + linear) \u2014 first IPI result for this architecture class",
+      "research_role": "Hybrid attention (softmax + linear) — first IPI result for this architecture class",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -97,7 +97,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_qwen35_397b.py",
       "env_var": "NVIDIA_KEY_QWEN35_397B",
-      "research_role": "Controlled pair BASE \u2014 Alibaba generational alignment (3.5 vs 3.7-Max)",
+      "research_role": "Controlled pair BASE — Alibaba generational alignment (3.5 vs 3.7-Max)",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -112,7 +112,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_qwen37_max.py",
       "env_var": "DASHSCOPE_API_KEY",
-      "research_role": "Controlled pair UPDATED \u2014 Alibaba generational alignment (3.5 vs 3.7-Max)",
+      "research_role": "Controlled pair UPDATED — Alibaba generational alignment (3.5 vs 3.7-Max)",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -157,7 +157,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_diffusiongemma.py",
       "env_var": "NVIDIA_KEY_DIFFUSIONGEMMA",
-      "research_role": "Diffusion (non-autoregressive) generation \u2014 tests whether IPI requires sequential conditioning",
+      "research_role": "Diffusion (non-autoregressive) generation — tests whether IPI requires sequential conditioning",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -172,7 +172,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_phi4.py",
       "env_var": "GITHUB_TOKEN",
-      "research_role": "Synthetic training data hypothesis \u2014 only primarily-synthetic-data model in cohort",
+      "research_role": "Synthetic training data hypothesis — only primarily-synthetic-data model in cohort",
       "verification_status": "pending_live_check",
       "evaluation_date": null
     },
@@ -187,7 +187,7 @@
       "api_style": "Google GenAI SDK",
       "script": "run_gemini35_flash.py",
       "env_var": "GOOGLE_API_KEY",
-      "research_role": "Google closed flagship \u2014 open vs closed comparison within same lab",
+      "research_role": "Google closed flagship — open vs closed comparison within same lab",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -202,7 +202,7 @@
       "api_style": "Google GenAI SDK",
       "script": "run_gemma4_31b.py",
       "env_var": "GOOGLE_API_KEY",
-      "research_role": "Controlled pair BASE \u2014 dense vs MoE (same lab, ~31B)",
+      "research_role": "Controlled pair BASE — dense vs MoE (same lab, ~31B)",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -217,7 +217,7 @@
       "api_style": "Google GenAI SDK",
       "script": "run_gemma4_26b_moe.py",
       "env_var": "GOOGLE_API_KEY",
-      "research_role": "Controlled pair UPDATED \u2014 dense vs MoE (26B total, 4B active)",
+      "research_role": "Controlled pair UPDATED — dense vs MoE (26B total, 4B active)",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -232,7 +232,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_cohere_command_a.py",
       "env_var": "GITHUB_TOKEN",
-      "research_role": "RAG-native deployment context \u2014 built for document ingestion, tests compliance-vs-safety tradeoff",
+      "research_role": "RAG-native deployment context — built for document ingestion, tests compliance-vs-safety tradeoff",
       "verification_status": "pending_live_check",
       "evaluation_date": null
     },
@@ -247,7 +247,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_gpt4o.py",
       "env_var": "GITHUB_TOKEN",
-      "research_role": "Community-standard OpenAI baseline. Controlled pair BASE with GPT-5.5 \u2014 two generations of OpenAI alignment.",
+      "research_role": "Community-standard OpenAI baseline. Controlled pair BASE with GPT-5.5 — two generations of OpenAI alignment.",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -277,7 +277,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_gpt_oss_120b.py",
       "env_var": "GROQ_API_KEY",
-      "research_role": "Open-weight OpenAI model. Controlled pair with GPT-5.5 \u2014 isolates what proprietary closed safety stack adds.",
+      "research_role": "Open-weight OpenAI model. Controlled pair with GPT-5.5 — isolates what proprietary closed safety stack adds.",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -292,7 +292,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_llama31_8b.py",
       "env_var": "GROQ_API_KEY",
-      "research_role": "Meta scale ladder STEP 2 (8B). ~14,400 RPD \u2014 fastest full run in cohort.",
+      "research_role": "Meta scale ladder STEP 2 (8B). ~14,400 RPD — fastest full run in cohort.",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -462,21 +462,6 @@
       "evaluation_date": null
     },
     {
-      "model_name": "tencent_hunyuan",
-      "display_name": "Tencent Hunyuan",
-      "model_id": "tencent/hunyuan-large:free",
-      "lab": "Tencent",
-      "lab_country": "CN",
-      "provider": "OpenRouter",
-      "provider_tier": "B",
-      "api_style": "OpenAI-compatible",
-      "script": "run_tencent_hunyuan.py",
-      "env_var": "OPENROUTER_API_KEY",
-      "research_role": "Closed Chinese flagship comparison baseline",
-      "verification_status": "not_required",
-      "evaluation_date": null
-    },
-    {
       "model_name": "poolside_laguna_m1",
       "display_name": "Poolside Laguna M.1",
       "model_id": "poolside/laguna-m.1:free",
@@ -488,6 +473,21 @@
       "script": "run_poolside_laguna.py",
       "env_var": "OPENROUTER_API_KEY",
       "research_role": "Code-native objective; text-based IPI vs code-aligned weights",
+      "verification_status": "not_required",
+      "evaluation_date": null
+    },
+    {
+      "model_name": "sarvam_8b_nim",
+      "display_name": "Sarvam 8B (NVIDIA NIM)",
+      "model_id": "sarvamai/sarvam-8b-instruct",
+      "lab": "Sarvam AI",
+      "lab_country": "IN",
+      "provider": "NVIDIA NIM",
+      "provider_tier": "B",
+      "api_style": "OpenAI-compatible",
+      "script": "run_sarvam_8b_nim.py",
+      "env_var": "NVIDIA_API_KEY",
+      "research_role": "Hindi-native language training control condition on NVIDIA NIM infrastructure",
       "verification_status": "not_required",
       "evaluation_date": null
     }
@@ -527,6 +527,11 @@
       "model_name": "nous_hermes_405b",
       "display_name": "Nous Hermes 3 405B",
       "reason": "API Endpoint Removed / 404s"
+    },
+    {
+      "model_name": "tencent_hunyuan",
+      "display_name": "Tencent Hunyuan",
+      "reason": "Free tier discontinued, confirmed 2026-07-22."
     }
   ]
 }
