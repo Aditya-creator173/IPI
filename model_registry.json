@@ -45,7 +45,7 @@
     {
       "model_name": "deepseek_v4_pro",
       "display_name": "DeepSeek-V4-Pro",
-      "model_id": "verify_at_build.nvidia.com",
+      "model_id": "deepseek-ai/deepseek-v4-pro",
       "lab": "DeepSeek",
       "lab_country": "CN",
       "provider": "NVIDIA NIM",

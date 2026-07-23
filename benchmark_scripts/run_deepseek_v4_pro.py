@@ -15,7 +15,7 @@ from _core import run_benchmark
 from _nim import call_nim
 
 MODEL_NAME    = "deepseek_v4_pro"
-MODEL_ID      = os.environ.get("NIM_DEEPSEEK_V4_PRO_MODEL_ID", "deepseek/deepseek-v4-pro")
+MODEL_ID      = os.environ.get("NIM_DEEPSEEK_V4_PRO_MODEL_ID", "deepseek-ai/deepseek-v4-pro")
 PAUSE_SECONDS = 2.0
 
 def call(prompt: str, system_prompt: str) -> str:
