@@ -55,6 +55,16 @@ _BASE_FIELD_ORDER = [
     "response_length_chars", "prompt_sent", "response_received",
 ]
 
+try:
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "benchmark_scripts"))
+    from _core import CSV_FIELDNAMES as _CORE_FIELDNAMES
+    assert _BASE_FIELD_ORDER == _CORE_FIELDNAMES, (
+        f"INVARIANT VIOLATION: _BASE_FIELD_ORDER in merge_results.py has drifted from "
+        f"CSV_FIELDNAMES in _core.py.\nDiff: {set(_BASE_FIELD_ORDER) ^ set(_CORE_FIELDNAMES)}"
+    )
+except ImportError:
+    pass
+
 
 def _build_fieldnames(csv_files: list[Path]) -> list[str]:
     """
