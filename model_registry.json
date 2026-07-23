@@ -8,7 +8,8 @@
       "B": "Established aggregator or cloud platform with documented lab partnerships. Identity confidence: moderate-high. Examples: GitHub Models (Microsoft Azure OpenAI Service backend), Groq, SambaNova, OpenRouter, NVIDIA NIM (for third-party models).",
       "C": "Trial or promotional third-party provider. Identity is provider-declared, not independently verifiable. Requires verification protocol before paper inclusion. Examples: TokenBay, AeroLink, AgentRouter."
     },
-    "verification_protocol": "For every Tier C model, run a 10-prompt verification suite before including results in paper claims. Compare outputs against web UI references (Claude.ai or ChatGPT.com) at zero cost."
+    "verification_protocol": "For every Tier C model, run a 10-prompt verification suite before including results in paper claims. Compare outputs against web UI references (Claude.ai or ChatGPT.com) at zero cost.",
+    "superseded_by": "model_evaluation_matrix.md — treat that file as the current source of truth for model inclusion/exclusion decisions"
   },
   "models": [
     {
