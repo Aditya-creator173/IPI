@@ -1,0 +1,172 @@
+{
+  "phi4": {
+    "rank": 1,
+    "ipir_point_estimate": 63.21,
+    "ipir_boot_mean": 63.01,
+    "ci_95_lower": 56.25,
+    "ci_95_upper": 69.12,
+    "ci_95_margin": 6.44,
+    "rank_ci_95": "#1\u2013#1",
+    "scenarios_evaluated": 53
+  },
+  "gemma4_31b": {
+    "rank": 2,
+    "ipir_point_estimate": 52.0,
+    "ipir_boot_mean": 51.91,
+    "ci_95_lower": 49.07,
+    "ci_95_upper": 54.63,
+    "ci_95_margin": 2.78,
+    "rank_ci_95": "#2\u2013#7",
+    "scenarios_evaluated": 100
+  },
+  "gemini36_flash": {
+    "rank": 3,
+    "ipir_point_estimate": 51.5,
+    "ipir_boot_mean": 51.48,
+    "ci_95_lower": 49.06,
+    "ci_95_upper": 53.7,
+    "ci_95_margin": 2.32,
+    "rank_ci_95": "#2\u2013#8",
+    "scenarios_evaluated": 100
+  },
+  "gemma4_26b_moe": {
+    "rank": 4,
+    "ipir_point_estimate": 51.0,
+    "ipir_boot_mean": 50.93,
+    "ci_95_lower": 48.25,
+    "ci_95_upper": 53.51,
+    "ci_95_margin": 2.63,
+    "rank_ci_95": "#2\u2013#8",
+    "scenarios_evaluated": 100
+  },
+  "nemotron_ultra": {
+    "rank": 5,
+    "ipir_point_estimate": 51.0,
+    "ipir_boot_mean": 50.97,
+    "ci_95_lower": 48.15,
+    "ci_95_upper": 53.85,
+    "ci_95_margin": 2.85,
+    "rank_ci_95": "#2\u2013#9",
+    "scenarios_evaluated": 100
+  },
+  "deepseek_v4_pro": {
+    "rank": 6,
+    "ipir_point_estimate": 50.5,
+    "ipir_boot_mean": 50.39,
+    "ci_95_lower": 46.0,
+    "ci_95_upper": 54.46,
+    "ci_95_margin": 4.23,
+    "rank_ci_95": "#2\u2013#9",
+    "scenarios_evaluated": 100
+  },
+  "qwen36_27b": {
+    "rank": 7,
+    "ipir_point_estimate": 50.5,
+    "ipir_boot_mean": 50.43,
+    "ci_95_lower": 47.0,
+    "ci_95_upper": 53.92,
+    "ci_95_margin": 3.46,
+    "rank_ci_95": "#2\u2013#10",
+    "scenarios_evaluated": 100
+  },
+  "gemini35_flash": {
+    "rank": 8,
+    "ipir_point_estimate": 50.0,
+    "ipir_boot_mean": 49.95,
+    "ci_95_lower": 48.04,
+    "ci_95_upper": 51.92,
+    "ci_95_margin": 1.94,
+    "rank_ci_95": "#4\u2013#9",
+    "scenarios_evaluated": 100
+  },
+  "poolside_laguna_m1": {
+    "rank": 9,
+    "ipir_point_estimate": 48.0,
+    "ipir_boot_mean": 47.94,
+    "ci_95_lower": 44.34,
+    "ci_95_upper": 51.0,
+    "ci_95_margin": 3.33,
+    "rank_ci_95": "#7\u2013#14",
+    "scenarios_evaluated": 100
+  },
+  "gpt_oss_120b": {
+    "rank": 10,
+    "ipir_point_estimate": 47.0,
+    "ipir_boot_mean": 46.95,
+    "ci_95_lower": 44.74,
+    "ci_95_upper": 49.09,
+    "ci_95_margin": 2.18,
+    "rank_ci_95": "#9\u2013#14",
+    "scenarios_evaluated": 100
+  },
+  "llama3.1_8b": {
+    "rank": 11,
+    "ipir_point_estimate": 47.0,
+    "ipir_boot_mean": 46.93,
+    "ci_95_lower": 43.22,
+    "ci_95_upper": 50.0,
+    "ci_95_margin": 3.39,
+    "rank_ci_95": "#8\u2013#14",
+    "scenarios_evaluated": 100
+  },
+  "minimax_m2": {
+    "rank": 12,
+    "ipir_point_estimate": 46.88,
+    "ipir_boot_mean": 46.89,
+    "ci_95_lower": 44.0,
+    "ci_95_upper": 50.0,
+    "ci_95_margin": 3.0,
+    "rank_ci_95": "#7\u2013#15",
+    "scenarios_evaluated": 48
+  },
+  "cohere_command_a": {
+    "rank": 13,
+    "ipir_point_estimate": 46.77,
+    "ipir_boot_mean": 46.7,
+    "ci_95_lower": 43.14,
+    "ci_95_upper": 50.0,
+    "ci_95_margin": 3.43,
+    "rank_ci_95": "#8\u2013#15",
+    "scenarios_evaluated": 93
+  },
+  "groq_compound": {
+    "rank": 14,
+    "ipir_point_estimate": 46.07,
+    "ipir_boot_mean": 45.99,
+    "ci_95_lower": 43.48,
+    "ci_95_upper": 48.86,
+    "ci_95_margin": 2.69,
+    "rank_ci_95": "#11\u2013#16",
+    "scenarios_evaluated": 89
+  },
+  "llama33_70b": {
+    "rank": 15,
+    "ipir_point_estimate": 45.0,
+    "ipir_boot_mean": 44.95,
+    "ci_95_lower": 41.82,
+    "ci_95_upper": 48.18,
+    "ci_95_margin": 3.18,
+    "rank_ci_95": "#12\u2013#16",
+    "scenarios_evaluated": 100
+  },
+  "deepseek_r1": {
+    "rank": 16,
+    "ipir_point_estimate": 41.03,
+    "ipir_boot_mean": 40.99,
+    "ci_95_lower": 34.99,
+    "ci_95_upper": 47.22,
+    "ci_95_margin": 6.11,
+    "rank_ci_95": "#15\u2013#17",
+    "scenarios_evaluated": 39
+  },
+  "mistral_large3": {
+    "rank": 17,
+    "ipir_point_estimate": 35.0,
+    "ipir_boot_mean": 34.94,
+    "ci_95_lower": 20.0,
+    "ci_95_upper": 50.0,
+    "ci_95_margin": 15.0,
+    "rank_ci_95": "#8\u2013#17",
+    "scenarios_evaluated": 10
+  }
+}

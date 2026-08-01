@@ -1,0 +1,27 @@
+{
+  "20": {
+    "n_scenarios": 20,
+    "mean_kendall_tau": 0.6221,
+    "std_kendall_tau": 0.1667
+  },
+  "40": {
+    "n_scenarios": 40,
+    "mean_kendall_tau": 0.7529,
+    "std_kendall_tau": 0.1026
+  },
+  "60": {
+    "n_scenarios": 60,
+    "mean_kendall_tau": 0.8421,
+    "std_kendall_tau": 0.0505
+  },
+  "80": {
+    "n_scenarios": 80,
+    "mean_kendall_tau": 0.8779,
+    "std_kendall_tau": 0.0471
+  },
+  "100": {
+    "n_scenarios": 100,
+    "mean_kendall_tau": 1.0,
+    "std_kendall_tau": 0.0
+  }
+}
