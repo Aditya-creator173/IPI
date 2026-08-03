@@ -16,7 +16,7 @@ from _nim import call_nim
 
 MODEL_NAME    = "deepseek_v4_pro"
 MODEL_ID      = os.environ.get("NIM_DEEPSEEK_V4_PRO_MODEL_ID", "deepseek-ai/deepseek-v4-pro")
-PAUSE_SECONDS = 2.0
+PAUSE_SECONDS = 0.5
 
 def call(prompt: str, system_prompt: str) -> str:
     return call_nim(MODEL_ID, prompt, system_prompt, model_suffix="DEEPSEEK_V4_PRO")
