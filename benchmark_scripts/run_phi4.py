@@ -12,7 +12,7 @@ Usage:
 """
 
 from _core import run_benchmark
-from _github import call_github, client
+from _github import call_github
 
 MODEL_NAME    = "phi4"
 MODEL_ID      = "Phi-4"
