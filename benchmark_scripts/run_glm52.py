@@ -34,7 +34,7 @@ MODEL_ID      = os.environ.get("NIM_GLM52_MODEL_ID", "z-ai/glm-5.2")
 PAUSE_SECONDS = 2.0
 
 def call(prompt: str, system_prompt: str) -> str:
-    return call_nim(MODEL_ID, prompt, system_prompt, model_suffix="GLM52")
+    return call_nim(MODEL_ID, prompt, system_prompt, model_suffix="GLM52", timeout=240)
 
 
 if __name__ == "__main__":
