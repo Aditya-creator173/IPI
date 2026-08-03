@@ -5,6 +5,11 @@ and cycling them efficiently when rate limits occur.
 """
 
 import os
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 _provider_keys: dict[str, list[str]] = {}
 _provider_indices: dict[str, int] = {}
