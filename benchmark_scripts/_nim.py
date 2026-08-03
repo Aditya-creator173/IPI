@@ -8,7 +8,7 @@ from __future__ import annotations
 import time
 import _core
 import _keys
-from openai import OpenAI, APIStatusError
+from openai import OpenAI, APIStatusError, APITimeoutError, APIConnectionError
 
 _clients: dict[str, OpenAI] = {}
 
@@ -27,13 +27,12 @@ def call_nim(
     model_id: str,
     prompt: str,
     system_prompt: str,
-    model_suffix: str, # Kept for backward compatibility
-    timeout: int = 60,
+    model_suffix: str = "", # Kept for backward compatibility
+    timeout: int = 120,
     max_retries: int = 3,
     initial_backoff: float = 2.0,
 ) -> str:
-    """Call a NIM model with exponential backoff on 429/5xx errors. Do not retry 404s."""
-    client = get_client()
+    """Call a NIM model with exponential backoff and key rotation on 429/5xx/Timeout errors."""
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
@@ -41,6 +40,7 @@ def call_nim(
 
     backoff = initial_backoff
     for attempt in range(max_retries + 1):
+        client = get_client()
         try:
             resp = client.chat.completions.create(
                 model=model_id,
@@ -61,6 +61,18 @@ def call_nim(
                 return "PROVIDER_FILTERED: content field was null (likely provider-side content filter)"
             return content
 
+        except (APITimeoutError, APIConnectionError) as e:
+            if attempt < max_retries:
+                try:
+                    new_key = _keys.rotate_key("NVIDIA")
+                    print(f"\n[NIM] Connection/Timeout error ({type(e).__name__}). Rotated NVIDIA key and retrying...")
+                except Exception as ex:
+                    print(f"\n[NIM] Timeout retry attempt {attempt + 1}/{max_retries}: {e}")
+                time.sleep(backoff)
+                backoff *= 2
+                continue
+            raise
+
         except APIStatusError as e:
             # Retry on 429 (rate limits) and 5xx (server errors).
             # Do NOT retry 404 — stale model IDs should surface immediately.
@@ -68,7 +80,6 @@ def call_nim(
                 if e.status_code == 429:
                     try:
                         new_key = _keys.rotate_key("NVIDIA")
-                        client = get_client()
                         print(f"\n[NIM] Rate limit hit. Rotating key and retrying immediately...")
                         continue
                     except Exception as ex:
