@@ -7,7 +7,7 @@ Rate tier : HIGH — 50 RPD, 10 RPM
 """
 
 from _core import run_benchmark
-from _github import call_github, client
+from _github import call_github
 
 MODEL_NAME    = "gpt5"
 MODEL_ID      = "gpt-5"
