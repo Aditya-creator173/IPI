@@ -1,14 +1,14 @@
 """
 run_groq_compound.py  —  Groq Compound System via Groq
 Provider : Groq
-Model ID : groq-compound-it
+Model ID : groq/compound
 """
 
 from _core import run_benchmark
 from _groq import call_groq
 
 MODEL_NAME    = "groq_compound"
-MODEL_ID      = "groq-compound-it"
+MODEL_ID      = "groq/compound"
 PAUSE_SECONDS = 2.0
 
 
