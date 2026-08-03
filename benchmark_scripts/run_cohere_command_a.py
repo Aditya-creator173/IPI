@@ -11,7 +11,7 @@ Usage:
 """
 
 from _core import run_benchmark
-from _github import call_github, client
+from _github import call_github
 
 MODEL_NAME    = "cohere_command_a"
 MODEL_ID      = "Cohere-command-a"
