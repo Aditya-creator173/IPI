@@ -83,6 +83,16 @@ All paper figures and tables use only the four high-variance dimensions:
 \texttt{category}, \texttt{attack\_goal}, \texttt{evasion\_style}, and
 \texttt{injection\_position}.
 
+Additionally, three of the eight taxonomy dimensions exhibit severe class imbalance:
+\texttt{attack\_goal} ranges from 64 (task hijacking) to 5 (identity corruption),
+a 12.8$\times$ spread; \texttt{evasion\_style} ranges from 59 (direct) to 4 (split),
+a 14.75$\times$ spread; and \texttt{injection\_position} ranges from 73 (end of content)
+to 2 (header fake), a 36.5$\times$ spread. Per-dimension statistical power is therefore
+limited for sparse categories, and vulnerability-profile analyses should be interpreted
+with caution for dimensions with fewer than 15 scenarios per category. Primary headline
+evaluations report IPI-R (Indirect Prompt Injection Resistance, where higher is better)
+alongside 95\% bootstrap confidence intervals and rank range percentiles.
+
 % ------------------------------------------------------------------
 \subsection{Cross-Lingual Generalization}
 \label{sec:lim-crosslingual}
