@@ -13,6 +13,21 @@
   },
   "models": [
     {
+      "model_name": "gpt_oss_20b",
+      "display_name": "GPT-OSS 20B",
+      "model_id": "openai/gpt-oss-20b",
+      "lab": "OpenAI",
+      "lab_country": "US",
+      "provider": "Groq",
+      "provider_tier": "B",
+      "api_style": "OpenAI-compatible",
+      "script": "run_gpt_oss_20b.py",
+      "env_var": "GROQ_API_KEY",
+      "research_role": "OpenAI compact open-weight MoE model (20B total, 3.6B active)",
+      "verification_status": "not_required",
+      "evaluation_date": null
+    },
+    {
       "model_name": "glm52",
       "display_name": "GLM-5.2",
       "model_id": "z-ai/glm-5.2",
@@ -450,7 +465,7 @@
     {
       "model_name": "groq_compound",
       "display_name": "Groq Compound",
-      "model_id": "groq-compound-it",
+      "model_id": "groq/compound",
       "lab": "Groq",
       "lab_country": "US",
       "provider": "Groq",
@@ -458,7 +473,7 @@
       "api_style": "OpenAI-compatible",
       "script": "run_groq_compound.py",
       "env_var": "GROQ_API_KEY",
-      "research_role": "Agentic/Compound system testing via multi-step workflow",
+      "research_role": "Agentic/Compound system testing (GPT-OSS 120B + Llama 4 Scout compound architecture) via multi-step workflow",
       "verification_status": "not_required",
       "evaluation_date": null
     },
@@ -512,7 +527,7 @@
     {
       "model_name": "seed_lite",
       "display_name": "ByteDance Seed-2.0-lite",
-      "reason": "Explicitly rejected: No stepfun no bytedance."
+      "reason": "Provider unavailable; no StepFun or ByteDance API access at evaluation time"
     },
     {
       "model_name": "glm51",
