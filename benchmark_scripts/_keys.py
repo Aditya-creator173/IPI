@@ -53,19 +53,40 @@ def rotate_key(provider_prefix: str) -> str:
 
 def _init_provider(provider_prefix: str):
     keys = []
-    # Try numbered keys first (e.g. GROQ_API_KEY_1, GROQ_TOKEN_1)
-    for i in range(1, 100):
-        val = os.environ.get(f"{provider_prefix}_API_KEY_{i}") or os.environ.get(f"{provider_prefix}_TOKEN_{i}")
-        if val and val.strip():
-            keys.append(val.strip())
+    # Known aliases for provider prefixes
+    prefixes = [provider_prefix]
+    if provider_prefix == "QWENCLOUD":
+        prefixes.extend(["QWEN", "DASHSCOPE"])
+    elif provider_prefix == "BEDROCK":
+        prefixes.extend(["AWS", "AWS_BEDROCK"])
+
+    # Try numbered keys first (e.g. QWEN_API_KEY_1, GROQ_API_KEY_1)
+    for pfx in prefixes:
+        for i in range(1, 100):
+            val = (
+                os.environ.get(f"{pfx}_API_KEY_{i}") or 
+                os.environ.get(f"{pfx}_TOKEN_{i}") or
+                os.environ.get(f"{pfx}_KEY_{i}")
+            )
+            if val and val.strip() and val.strip() not in keys:
+                keys.append(val.strip())
             
-    # Fallback to singular key if no numbered keys found
+    # Fallback to unnumbered keys if no numbered keys found (e.g. QWEN_API_KEY, SAMBANOVA_API_KEY)
     if not keys:
-        val = os.environ.get(f"{provider_prefix}_API_KEY") or os.environ.get(f"{provider_prefix}_TOKEN")
-        if val and val.strip():
-            # Support legacy comma-separated list
-            parts = [t.strip() for t in val.split(",") if t.strip()]
-            keys.extend(parts)
+        for pfx in prefixes:
+            val = (
+                os.environ.get(f"{pfx}_API_KEY") or 
+                os.environ.get(f"{pfx}_TOKEN") or
+                os.environ.get(f"{pfx}_KEY") or
+                (os.environ.get("AWS_ACCESS_KEY_ID") if pfx == "AWS" else None)
+            )
+            if val and val.strip():
+                parts = [t.strip() for t in val.split(",") if t.strip()]
+                for part in parts:
+                    if part not in keys:
+                        keys.append(part)
             
     _provider_keys[provider_prefix] = keys
     _provider_indices[provider_prefix] = 0
+
+
