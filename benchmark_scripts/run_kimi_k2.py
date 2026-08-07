@@ -1,26 +1,19 @@
 """
-run_kimi_k2.py  —  Moonshot Kimi K2.7 via NVIDIA NIM
-Provider  : NVIDIA NIM (OpenAI-compatible)
-Model ID  : moonshotai/kimi-k2.7  (override via NIM_KIMI_K2_MODEL_ID)
-Env var   : NVIDIA_KEY_KIMI_K2  (or NVIDIA_API_KEY fallback)
-
-Usage:
-    python run_kimi_k2.py
-    python run_kimi_k2.py --dry-run
-    python run_kimi_k2.py --validate
+run_kimi_k2.py  —  Kimi K2.6 via Cloudflare Workers AI
+Provider  : Cloudflare Workers AI
+Model ID  : kimi-k2-6
+Role      : Extreme long-context MoE
 """
 
-import os
 from _core import run_benchmark
-from _nim import call_nim
+from _cloudflare import call_cloudflare
 
 MODEL_NAME    = "kimi_k2"
-MODEL_ID      = os.environ.get("NIM_KIMI_K2_MODEL_ID", "moonshotai/kimi-k2.7")
-PAUSE_SECONDS = 2.0
+MODEL_ID      = "kimi-k2-6"
+PAUSE_SECONDS = 1.0
 
 def call(prompt: str, system_prompt: str) -> str:
-    return call_nim(MODEL_ID, prompt, system_prompt, model_suffix="KIMI_K2")
-
+    return call_cloudflare(MODEL_ID, prompt, system_prompt)
 
 if __name__ == "__main__":
     run_benchmark(MODEL_NAME, call, MODEL_NAME, PAUSE_SECONDS)
