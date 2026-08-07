@@ -1,25 +1,19 @@
 """
-run_llama4_scout.py  —  Llama 4 Scout via GitHub Models
-Provider  : GitHub Models (PAT)
-Model ID  : Llama-4-Scout-17B-16E
-Rate tier : LOW — 150 RPD, 15 RPM
-
-Usage:
-    python run_llama4_scout.py
-    python run_llama4_scout.py --dry-run
-    python run_llama4_scout.py --validate
+run_llama4_scout.py  —  LLaMA 4 Scout via Cloudflare Workers AI
+Provider  : Cloudflare Workers AI
+Model ID  : llama-4-scout-17b-16e-instruct
+Role      : Axis F scale midpoint & Axis H compound constituent
 """
 
 from _core import run_benchmark
-from _github import call_github
+from _cloudflare import call_cloudflare
 
 MODEL_NAME    = "llama4_scout"
-MODEL_ID      = "Llama-4-Scout-17B-16E"
-PAUSE_SECONDS = 6.5
+MODEL_ID      = "llama-4-scout-17b-16e-instruct"
+PAUSE_SECONDS = 1.0
 
 def call(prompt: str, system_prompt: str) -> str:
-    return call_github(MODEL_ID, prompt, system_prompt, timeout=60)
-
+    return call_cloudflare(MODEL_ID, prompt, system_prompt)
 
 if __name__ == "__main__":
     run_benchmark(MODEL_NAME, call, MODEL_NAME, PAUSE_SECONDS)
