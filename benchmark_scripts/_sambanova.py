@@ -1,39 +1,35 @@
 """
-Shared SambaNova Cloud client helper.
+_sambanova.py — Shared SambaNova Systems API client helper.
+Uses OpenAI-compatible client endpoint: https://api.sambanova.ai/v1
+Handles key rotation (SAMBANOVA_API_KEY) and exponential backoff on 429/5xx errors.
 """
 
 from __future__ import annotations
 
-import os
 import time
 import _core
 import _keys
-from openai import OpenAI, APIStatusError
+from openai import OpenAI, APIStatusError, APITimeoutError, APIConnectionError
 
-_client: OpenAI | None = None
-
+_clients: dict[str, OpenAI] = {}
 
 def get_client() -> OpenAI:
-    global _client
-    if _client is None:
-        key = _keys.get_key("SAMBANOVA")
-        _client = OpenAI(
+    key = _keys.get_key("SAMBANOVA")
+    if key not in _clients:
+        _clients[key] = OpenAI(
             base_url="https://api.sambanova.ai/v1",
             api_key=key,
         )
-    return _client
-
+    return _clients[key]
 
 def call_sambanova(
     model_id: str,
     prompt: str,
     system_prompt: str,
-    timeout: int = 90,
+    timeout: int = 120,
     max_retries: int = 3,
     initial_backoff: float = 2.0,
 ) -> str:
-    """Call a SambaNova model with exponential backoff on 429/5xx errors."""
-    client = get_client()
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
@@ -41,6 +37,7 @@ def call_sambanova(
 
     backoff = initial_backoff
     for attempt in range(max_retries + 1):
+        client = get_client()
         try:
             resp = client.chat.completions.create(
                 model=model_id,
@@ -48,35 +45,40 @@ def call_sambanova(
                 timeout=timeout,
             )
             if resp.usage:
-                _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
+                _core._call_usage["input_tokens"] = resp.usage.prompt_tokens
                 _core._call_usage["output_tokens"] = resp.usage.completion_tokens
 
             content = resp.choices[0].message.content
             if content is None:
                 _core._call_usage["filter_reason"] = (
-                    f"sambanova: content field was null "
-                    f"(finish_reason={resp.choices[0].finish_reason!r})"
+                    f"sambanova: content field null (finish_reason={resp.choices[0].finish_reason!r})"
                 )
-                return "PROVIDER_FILTERED: content field was null (likely provider-side content filter)"
+                return "PROVIDER_FILTERED: content field was null"
             return content
+
+        except (APITimeoutError, APIConnectionError) as e:
+            if attempt < max_retries:
+                try:
+                    _keys.rotate_key("SAMBANOVA")
+                    print(f"\n[SambaNova] Connection/Timeout error. Rotated key and retrying...")
+                except Exception:
+                    print(f"\n[SambaNova] Timeout retry attempt {attempt + 1}/{max_retries}: {e}")
+                time.sleep(backoff)
+                backoff *= 2
+                continue
+            raise
 
         except APIStatusError as e:
             if (e.status_code == 429 or e.status_code >= 500) and attempt < max_retries:
                 if e.status_code == 429:
                     try:
-                        new_key = _keys.rotate_key("SAMBANOVA")
-                        global _client
-                        _client = None  # Force re-initialization
-                        client = get_client()
-                        print(f"\n[SambaNova] Rate limit hit. Rotating key and retrying immediately...")
+                        _keys.rotate_key("SAMBANOVA")
+                        print(f"\n[SambaNova] Rate limit hit. Rotated key and retrying...")
                         continue
                     except Exception as ex:
                         print(f"\n[SambaNova] Failed to rotate key: {ex}")
 
-                print(
-                    f"\n[SambaNova] HTTP {e.status_code}. Retrying in {backoff:.0f}s "
-                    f"(attempt {attempt + 1}/{max_retries})..."
-                )
+                print(f"\n[SambaNova] HTTP {e.status_code}. Retrying in {backoff:.0f}s...")
                 time.sleep(backoff)
                 backoff *= 2
                 continue
