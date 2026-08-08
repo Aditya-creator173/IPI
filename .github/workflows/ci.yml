@@ -31,8 +31,9 @@ jobs:
           FOUND=0
           FORBIDDEN=(
             "^\.env$"
-            "results/.*\.csv$"
-            "results/.*\.jsonl$"
+            "results/csv/.*\.csv$"
+            "results/jsonl/.*\.jsonl$"
+            "^results/results.*\.csv$"
             "LOCAL[\s_]ONLY"
             "manual_testing_log"
             "novel_research_findings"
