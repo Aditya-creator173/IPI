@@ -31,7 +31,7 @@ SCRIPTS = [
     ("Cohere Command A Reasoning", "run_cohere_command_a_reasoning.py"),
 
     # --- Stage 5: QwenCloud (DashScope) ---
-    ("Qwen 3.5 Plus", "run_qwen35_397b.py"),
+    ("Qwen 3.5 Plus", "run_qwen35_plus.py"),
     ("Qwen 3.6 Max Preview", "run_qwen36_max.py"),
     ("Qwen 3.7 Max", "run_qwen37_max.py"),
     ("Qwen 3.7 Plus", "run_qwen37_plus.py"),
@@ -57,14 +57,21 @@ SCRIPTS = [
     ("DiffusionGemma 26B", "run_diffusiongemma.py"),
     ("Sarvam 8B", "run_sarvam8b.py"),
 
-    # --- Stage 8: SambaNova ---
-    ("MiniMax M2.7", "run_minimax_m2.py"),
+    # --- Stage 8: NVIDIA NIM ---
+    ("MiniMax M3", "run_minimax_m3.py"),
     ("DeepSeek V3.2", "run_deepseek_v32.py"),
 
     # --- Stage 9: OpenRouter ---
     ("Poolside Laguna M.1", "run_poolside_laguna.py"),
     ("Ling 3.0 Flash", "run_ling_30_flash.py"),
-    ("DeepSeek R1", "run_deepseek_r1.py"),
+
+    # --- Stage 10: AWS Bedrock ---
+    ("Claude Haiku 4.5", "run_claude_haiku.py"),
+    ("Claude Sonnet 4.6", "run_claude_sonnet.py"),
+    ("Claude Opus 4.6", "run_claude_opus.py"),
+    ("Grok 4.3", "run_grok4.py"),
+    ("Jamba 1.5 Large", "run_jamba15_large.py"),
+    ("DeepSeek R1 (Bedrock)", "run_deepseek_r1_bedrock.py"),
 ]
 
 def main():
