@@ -78,6 +78,7 @@ def _init_provider(provider_prefix: str):
                 os.environ.get(f"{pfx}_API_KEY") or 
                 os.environ.get(f"{pfx}_TOKEN") or
                 os.environ.get(f"{pfx}_KEY") or
+                (os.environ.get("AWS_BEARER_TOKEN_BEDROCK") if pfx in ("BEDROCK", "AWS") else None) or
                 (os.environ.get("AWS_ACCESS_KEY_ID") if pfx == "AWS" else None)
             )
             if val and val.strip():
