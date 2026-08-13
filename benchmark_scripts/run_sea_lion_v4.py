@@ -9,7 +9,7 @@ from _core import run_benchmark
 from _cloudflare import call_cloudflare
 
 MODEL_NAME    = "sea_lion_v4"
-MODEL_ID      = "gemma-sea-lion-v4-27b-it"
+MODEL_ID      = "@cf/aisingapore/gemma-sea-lion-v4-27b-it"
 PAUSE_SECONDS = 1.0
 
 def call(prompt: str, system_prompt: str) -> str:
