@@ -9,7 +9,7 @@ from _core import run_benchmark
 from _cloudflare import call_cloudflare
 
 MODEL_NAME    = "ibm_granite"
-MODEL_ID      = "granite-4.0-h-micro"
+MODEL_ID      = "@cf/ibm-granite/granite-4.0-h-micro"
 PAUSE_SECONDS = 1.0
 
 def call(prompt: str, system_prompt: str) -> str:
