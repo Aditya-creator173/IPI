@@ -17,7 +17,7 @@ def get_client() -> OpenAI:
     key = _keys.get_key("QWENCLOUD")
     if key not in _clients:
         _clients[key] = OpenAI(
-            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
             api_key=key,
         )
     return _clients[key]
@@ -39,20 +39,32 @@ def call_qwencloud(
     for attempt in range(max_retries + 1):
         client = get_client()
         try:
-            resp = client.chat.completions.create(
-                model=model_id,
-                messages=messages,
-                timeout=timeout,
-            )
-            if resp.usage:
-                _core._call_usage["input_tokens"] = resp.usage.prompt_tokens
-                _core._call_usage["output_tokens"] = resp.usage.completion_tokens
-
-            content = resp.choices[0].message.content
-            if content is None:
-                _core._call_usage["filter_reason"] = (
-                    f"qwencloud: content field was null (finish_reason={resp.choices[0].finish_reason!r})"
+            if "qwq" in model_id.lower() or "reason" in model_id.lower() or "3.8-max" in model_id.lower() or "qwen3" in model_id.lower():
+                stream = client.chat.completions.create(
+                    model=model_id,
+                    messages=messages,
+                    timeout=timeout,
+                    extra_body={"enable_thinking": True},
+                    stream=True,
                 )
+                content_chunks = []
+                for chunk in stream:
+                    if chunk.choices and chunk.choices[0].delta.content:
+                        content_chunks.append(chunk.choices[0].delta.content)
+                content = "".join(content_chunks)
+            else:
+                resp = client.chat.completions.create(
+                    model=model_id,
+                    messages=messages,
+                    timeout=timeout,
+                )
+                if resp.usage:
+                    _core._call_usage["input_tokens"] = resp.usage.prompt_tokens
+                    _core._call_usage["output_tokens"] = resp.usage.completion_tokens
+                content = resp.choices[0].message.content
+
+            if not content:
+                _core._call_usage["filter_reason"] = "qwencloud: content field was null or empty"
                 return "PROVIDER_FILTERED: content field was null"
             return content
 
