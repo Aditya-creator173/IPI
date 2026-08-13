@@ -8,7 +8,7 @@ from _core import run_benchmark
 from _bedrock import call_bedrock
 
 MODEL_NAME    = "claude_opus"
-MODEL_ID      = "anthropic.claude-3-opus-20240229-v1:0"
+MODEL_ID      = "anthropic.claude-opus-4-6"
 PAUSE_SECONDS = 1.5
 
 def call(prompt: str, system_prompt: str) -> str:
