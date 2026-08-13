@@ -9,7 +9,7 @@ from _core import run_benchmark
 from _cloudflare import call_cloudflare
 
 MODEL_NAME    = "qwq32b"
-MODEL_ID      = "qwq-32b"
+MODEL_ID      = "@cf/qwen/qwq-32b"
 PAUSE_SECONDS = 1.0
 
 def call(prompt: str, system_prompt: str) -> str:
