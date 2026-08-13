@@ -4,6 +4,9 @@ Model ID  : sarvam/sarvam-8b
 Role      : Regional Hindi specialization vs safety hierarchy
 """
 
+import sys, os
+sys.path.insert(0, os.path.dirname(__file__))
+
 from _core import run_benchmark
 from _nim import call_nim
 
