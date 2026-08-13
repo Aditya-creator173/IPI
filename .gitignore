@@ -41,6 +41,7 @@ Thumbs.db
 # Keep directory structure via .gitkeep; exclude actual data files
 results/csv/*.csv
 results/csv/*.jsonl
+results/csv/backup_pre_v3/
 results/jsonl/*.jsonl
 results/jsonl/*.csv
 results/results_final.csv
