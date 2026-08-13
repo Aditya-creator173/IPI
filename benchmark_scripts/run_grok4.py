@@ -8,7 +8,7 @@ from _core import run_benchmark
 from _bedrock import call_bedrock
 
 MODEL_NAME    = "grok4"
-MODEL_ID      = "xai.grok-4-3"
+MODEL_ID      = "xai.grok-4.3"
 PAUSE_SECONDS = 1.5
 
 def call(prompt: str, system_prompt: str) -> str:
