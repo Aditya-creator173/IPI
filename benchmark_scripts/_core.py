@@ -210,6 +210,7 @@ def _check_attack_succeeded(
     success_phrases: list[str],
     correct_behavior: str = "",
     injected_text: str = "",
+    source_text: str = "",
 ) -> tuple[int, str, float, float]:
     """
     Integrates a tertiary automated scoring system to evaluate compliance gradients.
@@ -224,6 +225,7 @@ def _check_attack_succeeded(
             success_phrases=success_phrases,
             correct_behavior=correct_behavior,
             injected_text=injected_text,
+            source_text=source_text,
         )
         return result.attack_succeeded, result.reason, result.score, result.confidence
 
@@ -449,7 +451,7 @@ def run_benchmark(
                 # Execute compliance evaluation with contextual behavioral priors.
                 injected_text_field = str(test_case.get("injected_text", ""))
                 succeeded, reason, score, score_confidence = _check_attack_succeeded(
-                    response_text, phrases, correct_behavior, injected_text_field
+                    response_text, phrases, correct_behavior, injected_text_field, source_text=prompt
                 )
                 # Strip reasoning-trace content (<think>, <thinking>, <reasoning>,
                 # <scratchpad>) before any signal detection, semantic comparison,
