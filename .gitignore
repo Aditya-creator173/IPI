@@ -68,6 +68,10 @@ manual_testing_log.md
 novel_research_findings.md
 disclosure_drafts/
 
+# GCP service account key — double-safety (folder above already covers it)
+LOCAL\ ONLY/gcp_service_account.json
+**/gcp_service_account.json
+
 # AI transcripts and private prompt data (Triple-layer security)
 conversations/
 chat_logs/
