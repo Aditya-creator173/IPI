@@ -9,7 +9,7 @@ from _core import run_benchmark
 from _cloudflare import call_cloudflare
 
 MODEL_NAME    = "llama4_scout"
-MODEL_ID      = "llama-4-scout-17b-16e-instruct"
+MODEL_ID      = "@cf/meta/llama-4-scout-17b-16e-instruct"
 PAUSE_SECONDS = 1.0
 
 def call(prompt: str, system_prompt: str) -> str:
