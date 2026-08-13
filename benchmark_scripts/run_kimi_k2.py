@@ -9,7 +9,7 @@ from _core import run_benchmark
 from _cloudflare import call_cloudflare
 
 MODEL_NAME    = "kimi_k2"
-MODEL_ID      = "kimi-k2-6"
+MODEL_ID      = "@cf/moonshotai/kimi-k2.6"
 PAUSE_SECONDS = 1.0
 
 def call(prompt: str, system_prompt: str) -> str:
