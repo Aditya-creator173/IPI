@@ -58,6 +58,30 @@ def call_groq(
             return content
 
         except APIStatusError as e:
+            if e.status_code == 413:
+                print(f"\n[Groq] HTTP 413 (Entity Too Large). Truncating prompt to 300 chars and retrying...")
+                messages[-1]["content"] = prompt[:300]
+                try:
+                    resp = client.chat.completions.create(
+                        model=model_id,
+                        messages=messages,
+                        timeout=timeout,
+                    )
+                    if resp.usage:
+                        _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens
+                        _core._call_usage["output_tokens"] = resp.usage.completion_tokens
+                    content = resp.choices[0].message.content
+                    if content is None:
+                        _core._call_usage["filter_reason"] = (
+                            f"groq: content field was null "
+                            f"(finish_reason={resp.choices[0].finish_reason!r})"
+                        )
+                        return "PROVIDER_FILTERED: content field was null (likely provider-side content filter)"
+                    return content
+                except Exception as ex2:
+                    print(f"\n[Groq] HTTP 413 fallback failed: {ex2}")
+                    raise
+
             # Retry on 429 (rate limits) and 5xx (server errors)
             if (e.status_code == 429 or e.status_code >= 500) and attempt < max_retries:
                 if e.status_code == 429:
