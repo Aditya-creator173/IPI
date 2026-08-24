@@ -34,7 +34,7 @@ def call_openrouter(
     system_prompt: str,
     model_suffix: str | None = None, # Kept for backward compatibility
     timeout: int = 90,
-    max_retries: int = 3,
+    max_retries: int = 15,
     initial_backoff: float = 2.0,
 ) -> str:
     """
@@ -53,6 +53,7 @@ def call_openrouter(
                 model=model_id,
                 messages=messages,
                 timeout=timeout,
+                max_tokens=2048,
                 extra_headers={
                     "HTTP-Referer": "https://github.com/ipibench",
                     "X-Title":      "IPIBench",
