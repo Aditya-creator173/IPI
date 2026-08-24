@@ -6,26 +6,26 @@
 
 | Defense Mode | ASR (%) | Delta from Baseline (pp) |
 | :--- | :--- | :--- |
-| No Defense | **16.0%** | 0.0pp |
-| input_filter | **16.0%** | 0.0pp |
-| prompt_warning | **4.0%** | -12.0pp |
-| spotlighting | **5.0%** | -11.0pp |
+| No Defense | **25.0%** | 0.0pp |
+| input_filter | **22.0%** | -3.0pp |
+| prompt_warning | **12.0%** | -13.0pp |
+| spotlighting | **10.0%** | -15.0pp |
 
 ## 2. Reads From The Data
 
-- **Input_filter: +0.0pp** 
+- **Input_filter: -3.0pp** 
   - *Negligible effect. This defense did not significantly alter the model's vulnerability profile.* 
-- **Prompt_warning: -12.0pp** 
+- **Prompt_warning: -13.0pp** 
   - *Strong defensive effect detected. Model effectively utilized this safeguard to block injections.* 
-- **Spotlighting: -11.0pp** 
+- **Spotlighting: -15.0pp** 
   - *Strong defensive effect detected. Model effectively utilized this safeguard to block injections.* 
 
 ## 3. Top Evasion Styles (Bypass Effectiveness)
 
 | Evasion Style | ASR (%) |
 | :--- | :--- |
-| fake_metadata | 17.2% |
-| direct | 11.4% |
-| foreign_language | 4.2% |
-| disguised | 3.3% |
+| fake_metadata | 26.6% |
+| direct | 19.5% |
+| foreign_language | 8.3% |
+| disguised | 6.7% |
 | split | 0.0% |
