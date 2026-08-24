@@ -1,7 +1,9 @@
 """
-run_deepseek_r1_bedrock.py — DeepSeek R1 via AWS Bedrock (Resumes deepseek_r1.csv)
+run_deepseek_r1_bedrock.py  —  DeepSeek R1 via AWS Bedrock (Converse API)
+Provider  : AWS Bedrock
 Model ID  : us.deepseek.r1-v1:0
-Role      : Axis 2 (Chain-of-Thought Reasoning Subject)
+Role      : Axis 2 (Chain-of-Thought Reasoning Subject) & Axis 4 DeepSeek generational flagship
+Auth      : AWS IAM (boto3 standard credentials)
 """
 
 import sys, os, re
@@ -23,4 +25,6 @@ def call(prompt: str, system_prompt: str) -> str:
     return strip_thinking(raw_response)
 
 if __name__ == "__main__":
+    print(f"=== Starting IPIBench Runner: {MODEL_NAME} ({MODEL_ID}) ===")
+    print("Provider: AWS Bedrock (Converse API) | Role: Axis 2 CoT Reasoning Subject")
     run_benchmark(MODEL_NAME, call, MODEL_NAME, PAUSE_SECONDS)
