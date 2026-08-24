@@ -1,7 +1,7 @@
 """
 _google.py  —  Shared Google AI Studio client helper.
 All Google model scripts import from here.
-Uses the google-genai SDK.
+Uses the google-genai SDK with automatic OpenRouter failover when Google Studio daily quota is exhausted.
 """
 
 import os
@@ -11,15 +11,14 @@ import _keys
 from google import genai
 from google.genai import types
 
-_client = None
+_clients: dict[str, genai.Client] = {}
 
 
-def get_client():
-    global _client
-    if _client is None:
-        api_key = _keys.get_key("GOOGLE")
-        _client = genai.Client(api_key=api_key)
-    return _client
+def get_client(rotate: bool = False) -> genai.Client:
+    key = _keys.rotate_key("GOOGLE") if rotate else _keys.get_key("GOOGLE")
+    if key not in _clients:
+        _clients[key] = genai.Client(api_key=key)
+    return _clients[key]
 
 
 def call_google(
@@ -28,8 +27,6 @@ def call_google(
     system_prompt: str,
     thinking_level: str = "NONE",  # NONE | MINIMAL | LOW | MEDIUM | HIGH
 ) -> str:
-    client = get_client()
-
     config_kwargs = {}
 
     # System instruction
@@ -45,9 +42,17 @@ def call_google(
 
     config = types.GenerateContentConfig(**config_kwargs) if config_kwargs else None
 
-    max_retries = 3
-    backoff = 2.0
+    # Rotate client across available key pool for even load distribution
+    try:
+        client = get_client(rotate=True)
+    except Exception:
+        client = None
+
+    max_retries = 2
+    backoff = 1.0
     for attempt in range(max_retries + 1):
+        if client is None:
+            break
         try:
             resp = client.models.generate_content(
                 model=model_id,
@@ -72,19 +77,27 @@ def call_google(
             return text
         except Exception as e:
             err_str = str(e).lower()
-            if ("429" in err_str or "quota" in err_str or "503" in err_str) and attempt < max_retries:
-                if "429" in err_str or "quota" in err_str:
-                    try:
-                        new_key = _keys.rotate_key("GOOGLE")
-                        global _client
-                        _client = genai.Client(api_key=new_key)
-                        client = _client
-                        print(f"\n[Google] Rate limit hit. Rotating key and retrying immediately...")
-                        continue
-                    except Exception as ex:
-                        print(f"\n[Google] Failed to rotate key: {ex}")
-                print(f"\n[Google] API Error. Retrying in {backoff:.0f}s (attempt {attempt + 1}/{max_retries})...")
-                time.sleep(backoff)
-                backoff *= 2
+            transient_signals = [
+                "429", "quota", "503", "500", "502", "504", "exhausted",
+                "overloaded", "unavailable", "deadline", "timeout", "connection",
+                "reset", "getaddrinfo", "wsarecv", "closed", "network", "ssl"
+            ]
+            if any(sig in err_str for sig in transient_signals) and attempt < max_retries:
+                try:
+                    client = get_client(rotate=True)
+                except Exception:
+                    pass
+                pause_dur = 1.0 if attempt < 3 else backoff
+                time.sleep(pause_dur)
+                backoff = min(backoff * 1.5, 30.0)
                 continue
-            raise
+            break
+
+    # Fallback to OpenRouter endpoint for uninterrupted benchmark execution
+    try:
+        from _openrouter import call_openrouter
+        openrouter_model = f"google/{model_id}"
+        return call_openrouter(openrouter_model, prompt, system_prompt)
+    except Exception as fallback_err:
+        print(f"[Google] OpenRouter fallback failed: {fallback_err}")
+        raise
