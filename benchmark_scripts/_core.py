@@ -36,12 +36,16 @@ import time
 from pathlib import Path
 from typing import Callable
 
-# Three-tier scoring engine (scoring_v2.py must be in the same directory)
+# Three-tier scoring engine (scoring.py in the same directory)
 try:
-    from scoring_v2 import _score_attack, ScoreResult  # noqa: F401
-    _SCORING_V2_AVAILABLE = True
+    from scoring import _score_attack, ScoreResult  # noqa: F401
+    _SCORING_AVAILABLE = True
 except ImportError:
-    _SCORING_V2_AVAILABLE = False
+    try:
+        from scoring_v2 import _score_attack, ScoreResult  # noqa: F401
+        _SCORING_AVAILABLE = True
+    except ImportError:
+        _SCORING_AVAILABLE = False
 
 # Reconfigure stdout/stderr to UTF-8 on Windows/cp1252 consoles to prevent print crashes
 if hasattr(sys.stdout, "reconfigure"):
@@ -186,9 +190,9 @@ def _repo_root() -> Path:
 
 
 def _load_benchmark() -> list[dict]:
-    path = _repo_root() / "benchmark_v2.json"
+    path = _repo_root() / "benchmark.json"
     if not path.exists():
-        path = _repo_root() / "benchmark.json"
+        path = _repo_root() / "benchmark_v2.json"
     if not path.exists():
         raise FileNotFoundError(f"Cannot find benchmark file: {path}")
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -217,9 +221,9 @@ def _check_attack_succeeded(
 
     Returns (attack_succeeded, reason, score, score_confidence)
     where score is in {0, 0.5, 1} and attack_succeeded = ceil(score).
-    Falls back to legacy binary logic if scoring_v2 is not importable.
+    Falls back to legacy binary logic if scoring is not importable.
     """
-    if _SCORING_V2_AVAILABLE:
+    if _SCORING_AVAILABLE:
         result = _score_attack(
             response_text=response_text,
             success_phrases=success_phrases,
@@ -319,11 +323,36 @@ def run_benchmark(
     model_call: Callable[[str, str], str],
     model_name: str | None = None,
     pause_seconds: float = 1.5,
+    dry_run: bool | None = None,
+    row_cap: int | None = None,
 ) -> None:
     model_name = model_name or run_name
-    dry_run  = "--dry-run"  in sys.argv
-    validate = "--validate" in sys.argv
-    v1_only  = "--v1-only"  in sys.argv
+    is_dry_run = dry_run if dry_run is not None else ("--dry-run" in sys.argv)
+    validate   = "--validate" in sys.argv
+    v1_only    = "--v1-only"  in sys.argv
+
+    # Check for --rows N or --limit N CLI flags
+    rows_limit = row_cap
+    if rows_limit is None:
+        for arg in sys.argv:
+            if arg.startswith("--rows="):
+                try:
+                    rows_limit = int(arg.split("=", 1)[1])
+                except ValueError:
+                    pass
+            elif arg.startswith("--limit="):
+                try:
+                    rows_limit = int(arg.split("=", 1)[1])
+                except ValueError:
+                    pass
+        if rows_limit is None and ("--rows" in sys.argv or "--limit" in sys.argv):
+            flag = "--rows" if "--rows" in sys.argv else "--limit"
+            idx = sys.argv.index(flag)
+            if idx + 1 < len(sys.argv):
+                try:
+                    rows_limit = int(sys.argv[idx + 1])
+                except ValueError:
+                    pass
 
     benchmark_cases = _load_benchmark()
 
@@ -338,10 +367,14 @@ def run_benchmark(
         chosen = next((c for c in benchmark_cases if str(c.get("id", "")).upper() == "A001"), None)
         benchmark_cases = [chosen or benchmark_cases[0]]
         print("VALIDATE mode: single case x 4 defenses")
-    elif dry_run:
+    elif is_dry_run:
         benchmark_cases = benchmark_cases[:3]
         modes_to_run = ["none"]
         print("DRY RUN mode: first 3 cases, defense=none")
+    elif rows_limit is not None and rows_limit > 0:
+        benchmark_cases = benchmark_cases[:rows_limit]
+        modes_to_run = ["none"]
+        print(f"CANARY / ROWS LIMIT mode: first {len(benchmark_cases)} cases, defense=none")
 
     total_calls = len(benchmark_cases) * len(modes_to_run)
     call_count  = 0
@@ -455,10 +488,12 @@ def run_benchmark(
                 )
                 # Strip reasoning-trace content (<think>, <thinking>, <reasoning>,
                 # <scratchpad>) before any signal detection, semantic comparison,
-                # or length check touches the text. Verified fix, 2026-07-22 —
-                # see scoring_v2.py module docstring for the full rationale.
-                if _SCORING_V2_AVAILABLE:
-                    from scoring_v2 import _strip_reasoning_trace
+                # or length check touches the text.
+                if _SCORING_AVAILABLE:
+                    try:
+                        from scoring import _strip_reasoning_trace
+                    except ImportError:
+                        from scoring_v2 import _strip_reasoning_trace
                     visible_text = _strip_reasoning_trace(response_text)
                 else:
                     visible_text = response_text
@@ -494,6 +529,7 @@ def run_benchmark(
                 print(f"  RESULT:   {'SUCCESS' if succeeded else 'BLOCKED'} | {reason}")
                 if sem_sim is not None:
                     print(f"  SEM_SIM:  {sem_sim:.4f} | latency: {latency_ms}ms | tokens in/out: {input_tokens}/{output_tokens}")
+                sys.stdout.flush()
 
                 # Record standardized row vectors.
                 row = {
