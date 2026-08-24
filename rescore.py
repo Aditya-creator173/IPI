@@ -1,9 +1,8 @@
 """
-rescore.py — Alias wrapper for rescore_all.py.
-Applies scoring_v2 v3 lexical-overlap logic to all existing benchmark CSVs.
+rescore.py — Root alias for benchmark_scripts/rescore.py.
 """
 
-from rescore_all import main
+from benchmark_scripts.rescore import main
 
 if __name__ == "__main__":
     main()
