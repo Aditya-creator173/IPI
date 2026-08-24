@@ -47,6 +47,8 @@ except ImportError:
     except ImportError:
         _SCORING_AVAILABLE = False
 
+_SCORING_V2_AVAILABLE = _SCORING_AVAILABLE
+
 # Reconfigure stdout/stderr to UTF-8 on Windows/cp1252 consoles to prevent print crashes
 if hasattr(sys.stdout, "reconfigure"):
     try:
