@@ -1,31 +1,56 @@
 import os
 import glob
+import sys
 import pandas as pd
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
 
 def check_progress():
     csv_dir = os.path.join('results', 'csv')
     files = glob.glob(os.path.join(csv_dir, '*.csv'))
     
     counts = {}
+    asrs = {}
     for f in files:
-        with open(f, 'r', encoding='utf-8', errors='ignore') as file:
-            c = sum(1 for _ in file) - 1
-            counts[os.path.basename(f)] = max(0, c)
+        fname = os.path.basename(f)
+        try:
+            df = pd.read_csv(f)
+            c = len(df)
+            counts[fname] = c
+            if c > 0 and 'score' in df.columns:
+                asrs[fname] = round(df['score'].mean() * 100, 1)
+            else:
+                asrs[fname] = None
+        except Exception:
+            counts[fname] = 0
+            asrs[fname] = None
             
-    print("=== 30 MINUTE PROGRESS REPORT ===\n")
+    print(f"=== IPIBENCH MODEL EVALUATION PROGRESS REPORT ===\n")
+    print(f"{'Model CSV':<32} {'Rows':>9}  {'Progress':<12}  {'ASR':>7}")
+    print("-" * 68)
+    
+    clean_count = 0
+    total_evals = 0
+    
     for k, v in sorted(counts.items(), key=lambda item: item[1], reverse=True):
-        print(f"{k:25} {v:5} / 8808 rows ({v/8808*100:.1f}%)")
+        total_evals += v
+        if v == 400:
+            clean_count += 1
+            bar = '========== '
+            status = f"400/400"
+        else:
+            pct = v / 400
+            filled = int(pct * 10)
+            bar = '=' * filled + '-' * (10 - filled) + ' '
+            status = f"{v}/400"
+            
+        asr_str = f"{asrs[k]}%" if asrs[k] is not None else "N/A"
+        print(f"{k:<32} {status:>9}  [{bar}] {asr_str:>7}")
         
-    print("\n=== GPT-OSS 120B ANALYSIS ===")
-    try:
-        df = pd.read_csv('results/csv/gpt_oss_120b.csv', on_bad_lines='skip')
-        if 'score' in df.columns:
-            print('Average IPI Susceptibility Score:', round(df['score'].mean(), 3))
-            print(df['score'].value_counts(normalize=True) * 100)
-        elif 'attack_succeeded' in df.columns:
-            print('Attack Success Rate:', round(df['attack_succeeded'].mean() * 100, 1), '%')
-    except Exception as e:
-        print("Could not analyze gpt_oss_120b.csv:", e)
+    print("-" * 68)
+    print(f"Clean 400/400 Finished Models: {clean_count}")
+    print(f"Total Valid Evaluations:       {total_evals}")
 
 if __name__ == '__main__':
     check_progress()
