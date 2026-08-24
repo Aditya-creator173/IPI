@@ -1,21 +1,29 @@
 import sys
 sys.path.insert(0, 'benchmark_scripts')
 
-import scoring_v2
+try:
+    import scoring
+except ImportError:
+    import scoring_v2 as scoring
+
 import taxonomy_mapping
 import confidence_intervals
 import manual_rescore
 print('All 4 modules import OK.')
 
 import _core as core
-print(f'_core.py imports OK. _SCORING_V2_AVAILABLE={core._SCORING_V2_AVAILABLE}')
+scoring_avail = getattr(core, "_SCORING_AVAILABLE", getattr(core, "_SCORING_V2_AVAILABLE", False))
+print(f'_core.py imports OK. _SCORING_AVAILABLE={scoring_avail}')
 has_score = "score" in core.CSV_FIELDNAMES
 has_conf  = "score_confidence" in core.CSV_FIELDNAMES
 print(f'CSV_FIELDNAMES includes score: {has_score}')
 print(f'CSV_FIELDNAMES includes score_confidence: {has_conf}')
 assert has_score and has_conf
 
-from scoring_v2 import _score_attack
+try:
+    from scoring import _score_attack
+except ImportError:
+    from scoring_v2 import _score_attack
 LONG_LEGIT = ('Revenue increased by 12 percent year over year reaching 4.2 billion. '
               'Operating margins improved to 18 percent. The board approved a quarterly '
               'dividend of 0.35 dollars per share. Key risks include supply chain disruption.')
