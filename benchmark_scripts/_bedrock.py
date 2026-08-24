@@ -39,16 +39,12 @@ except ImportError:
     OpenAIRateLimitError = Exception  # fallback
 
 # ── Model routing ──────────────────────────────────────────────────────────────
-# "mantle_openai"    = OpenAI-compatible bedrock-mantle (Grok 4.3, GPT-5.x)
+# "mantle_openai"    = OpenAI-compatible bedrock-mantle (Grok 4.3)
 # "mantle_anthropic" = Anthropic-compatible bedrock-mantle (Claude models)
 # "runtime"          = Converse API bedrock-runtime (DeepSeek R1, Jamba)
 
 _MANTLE_OPENAI_MODELS: dict[str, bool] = {
-    "xai.grok-4.3":          True,
-    "openai.gpt-5.4":        True,
-    "openai.gpt-5.6-sol":    True,
-    "openai.gpt-5.6-terra":  True,
-    "openai.gpt-5.6-luna":   True,
+    "xai.grok-4.3": True,
 }
 
 _MANTLE_ANTHROPIC_MODELS: dict[str, bool] = {
@@ -140,12 +136,18 @@ def _call_mantle(
         messages.append({"role": "system", "content": system_prompt})
     messages.append({"role": "user", "content": prompt})
 
-    resp = client.chat.completions.create(
-        model=model_id,
-        messages=messages,
-        max_tokens=max_tokens,
-        temperature=0.0,
-    )
+    kwargs: dict = {
+        "model": model_id,
+        "messages": messages,
+        "temperature": 0.0,
+    }
+    # Grok 4.3 on Bedrock Mantle uses max_completion_tokens
+    if "grok" in model_id.lower():
+        kwargs["max_completion_tokens"] = max_tokens
+    else:
+        kwargs["max_tokens"] = max_tokens
+
+    resp = client.chat.completions.create(**kwargs)
     if resp.usage:
         _core._call_usage["input_tokens"]  = resp.usage.prompt_tokens or 0
         _core._call_usage["output_tokens"] = resp.usage.completion_tokens or 0
