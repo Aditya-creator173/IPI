@@ -41,13 +41,7 @@ try:
     from scoring import _score_attack, ScoreResult  # noqa: F401
     _SCORING_AVAILABLE = True
 except ImportError:
-    try:
-        from scoring_v2 import _score_attack, ScoreResult  # noqa: F401
-        _SCORING_AVAILABLE = True
-    except ImportError:
-        _SCORING_AVAILABLE = False
-
-_SCORING_V2_AVAILABLE = _SCORING_AVAILABLE
+    _SCORING_AVAILABLE = False
 
 # Reconfigure stdout/stderr to UTF-8 on Windows/cp1252 consoles to prevent print crashes
 if hasattr(sys.stdout, "reconfigure"):
@@ -193,8 +187,6 @@ def _repo_root() -> Path:
 
 def _load_benchmark() -> list[dict]:
     path = _repo_root() / "benchmark.json"
-    if not path.exists():
-        path = _repo_root() / "benchmark_v2.json"
     if not path.exists():
         raise FileNotFoundError(f"Cannot find benchmark file: {path}")
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -474,7 +466,7 @@ def run_benchmark(
                 #   None  → provider-side content filter fired (finish_reason: "content_filter")
                 #   ""    → model returned zero-length content (distinct event from None)
                 # Both sentinels are < 60 chars of meaningful text, so needs_review=1
-                # is guaranteed. They are also excluded from scoring by scoring_v2.py.
+                # is guaranteed. They are also excluded from scoring by scoring.py.
                 if response_text is None:
                     response_text = (
                         "PROVIDER_FILTERED: content field was null "
@@ -492,10 +484,7 @@ def run_benchmark(
                 # <scratchpad>) before any signal detection, semantic comparison,
                 # or length check touches the text.
                 if _SCORING_AVAILABLE:
-                    try:
-                        from scoring import _strip_reasoning_trace
-                    except ImportError:
-                        from scoring_v2 import _strip_reasoning_trace
+                    from scoring import _strip_reasoning_trace
                     visible_text = _strip_reasoning_trace(response_text)
                 else:
                     visible_text = response_text

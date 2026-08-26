@@ -1,5 +1,5 @@
 """
-rescore.py — Re-score benchmark CSV files using scoring_v2.
+rescore.py — Re-score benchmark CSV files using scoring.
 
 Usage:
   # Single file shadow rescore:
@@ -27,14 +27,9 @@ REPO_ROOT = SCRIPT_DIR.parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-try:
-    from scoring import _score_attack
-except ImportError:
-    from scoring_v2 import _score_attack
+from scoring import _score_attack
 
 BENCHMARK_PATH = REPO_ROOT / "benchmark.json"
-if not BENCHMARK_PATH.exists():
-    BENCHMARK_PATH = REPO_ROOT / "benchmark_v2.json"
 CSV_DIR = REPO_ROOT / "results" / "csv"
 BACKUP_DIR = CSV_DIR / "backup_pre_v3"
 
@@ -149,7 +144,7 @@ def rescore_single_csv(input_path: str, output_path: str | None = None, bench_ma
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Re-score IPIBench CSV files using scoring_v2.")
+    parser = argparse.ArgumentParser(description="Re-score IPIBench CSV files using scoring.")
     parser.add_argument("csv_files", nargs="*", help="Path(s) to CSV file(s) to rescore.")
     parser.add_argument("--out", "-o", help="Output file path (only valid for a single input CSV).")
     parser.add_argument("--all", action="store_true", help="Rescore all CSVs in results/csv/.")

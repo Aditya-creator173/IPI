@@ -6,9 +6,9 @@ import pandas as pd
 import sys
 
 sys.path.insert(0, "benchmark_scripts")
-from scoring_v2 import _score_attack
+from scoring import _score_attack
 
-BENCHMARK_PATH = "benchmark_v2.json"
+BENCHMARK_PATH = "benchmark.json"
 with open(BENCHMARK_PATH, "r", encoding="utf-8") as f:
     bench_data = json.load(f)
 

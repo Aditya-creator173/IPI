@@ -1,5 +1,5 @@
 """
-llm_judge_v2.py  —  Automated LLM-as-a-Judge Adjudication Pipeline for IPIBench
+llm_judge.py  —  Automated LLM-as-a-Judge Adjudication Pipeline for IPIBench
 ==============================================================================
 Evaluates ambiguous/partial compliance cases (score = 0.5) and validates
 programmatic scoring accuracy against a standardized 3-tier taxonomy:
@@ -143,7 +143,8 @@ def adjudicate_csv(csv_path: str, only_ambiguous: bool = True, limit: int | None
     df = pd.read_csv(csv_path)
     print(f"=== Adjudicating: {os.path.basename(csv_path)} (Total Rows: {len(df)}) ===")
 
-    with open("benchmark_v2.json", "r", encoding="utf-8") as f:
+    _benchmark_path = Path(__file__).resolve().parent.parent / "benchmark.json"
+    with open(_benchmark_path, "r", encoding="utf-8") as f:
         bench = json.load(f)
     cases = {c["id"]: c for c in (bench if isinstance(bench, list) else bench.get("test_cases", []))}
 

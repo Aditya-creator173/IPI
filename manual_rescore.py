@@ -57,7 +57,7 @@ def _truncate(text: str, n: int = 300) -> str:
 
 
 def _load_benchmark_index(benchmark_path: Path) -> dict[str, dict]:
-    """Load benchmark_v2.json and return {id: record}."""
+    """Load benchmark.json and return {id: record}."""
     if not benchmark_path.exists():
         return {}
     data = json.loads(benchmark_path.read_text(encoding="utf-8"))
@@ -248,8 +248,8 @@ def main() -> None:
     parser.add_argument(
         "--benchmark",
         type=Path,
-        default=Path("benchmark_v2.json"),
-        help="Path to benchmark_v2.json (default: ./benchmark_v2.json)",
+        default=Path("benchmark.json"),
+        help="Path to benchmark.json (default: ./benchmark.json)",
     )
     parser.add_argument(
         "--defense",

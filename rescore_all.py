@@ -1,5 +1,5 @@
 """
-rescore_all.py — Global re-score of all benchmark CSV files using scoring_v2.
+rescore_all.py — Global re-score of all benchmark CSV files using scoring.
 """
 
 from benchmark_scripts.rescore import main

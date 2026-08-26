@@ -3,14 +3,14 @@ import os
 import pandas as pd
 import json
 
-with open('benchmark_v2.json', 'r', encoding='utf-8') as f:
+with open('benchmark.json', 'r', encoding='utf-8') as f:
     bench = json.load(f)
 expected_test_ids = set(c['id'] for c in (bench if isinstance(bench, list) else bench.get('test_cases', [])))
 expected_defenses = {'none', 'prompt_warning', 'spotlighting', 'input_filter'}
 
 csv_files = sorted(glob.glob('results/csv/*.csv'))
 
-print(f"Auditing all {len(csv_files)} CSV files in results/csv/ against benchmark_v2 ({len(expected_test_ids)} test cases x 4 defenses = 400 rows)...\n")
+print(f"Auditing all {len(csv_files)} CSV files in results/csv/ against benchmark ({len(expected_test_ids)} test cases x 4 defenses = 400 rows)...\n")
 
 passed_models = []
 imperfect_models = []

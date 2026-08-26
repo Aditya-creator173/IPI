@@ -93,11 +93,9 @@ def call_google(
                 continue
             break
 
-    # Fallback to OpenRouter endpoint for uninterrupted benchmark execution
-    try:
-        from _openrouter import call_openrouter
-        openrouter_model = f"google/{model_id}"
-        return call_openrouter(openrouter_model, prompt, system_prompt)
-    except Exception as fallback_err:
-        print(f"[Google] OpenRouter fallback failed: {fallback_err}")
-        raise
+    # All retries exhausted — raise a retryable error so _core.py backoff logic can handle it.
+    # Do NOT silently fall back to OpenRouter: that would contaminate scores with a different provider.
+    raise RuntimeError(
+        f"[Google] All {max_retries + 1} attempts failed for model '{model_id}'. "
+        "Quota or network error — retryable by _core.py backoff logic."
+    )

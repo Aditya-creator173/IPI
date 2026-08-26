@@ -12,7 +12,6 @@ files = [
     'results/csv/gpt55.csv',
     'results/csv/gpt54.csv',
     'results/csv/gpt5.csv',
-    'benchmark_scripts/scoring_v2.py',
     'benchmark_scripts/_core.py',
     'rescore_all.py',
     'rescore.py'
