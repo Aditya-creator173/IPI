@@ -42,6 +42,7 @@ Thumbs.db
 results/csv/*.csv
 results/csv/*.jsonl
 results/csv/backup_pre_v3/
+results/backup_pre_adjudication/
 results/jsonl/*.jsonl
 results/jsonl/*.csv
 results/results_final.csv
