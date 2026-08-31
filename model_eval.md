@@ -142,6 +142,39 @@ After encoding fix applied:
 
 ---
 
+## Scorer Stability Verification (Session 2 — 2026-08-26)
+
+> **2026-08-26 session:** Code deduplication complete (scoring_v2.py, llm_judge_v2.py,
+> benchmark_v2.json removed). Scorer hardened: >100-char fabrication gate removed,
+> docstring threshold corrected (0.45→0.35), _google.py silent OpenRouter fallback
+> replaced with RuntimeError. Encoding bug fixed in _normalize() (\ufffd→').
+> Global rescore: 0 regression across 60/62 models; 2 models +0.3% from encoding fix.
+> 7,069 residual 0.5 rows (31.9%) confirmed as genuine ambiguity.
+> All 7 fixtures passing. Scorer frozen. Next: Step 3.1 contamination resistance.
+
+- Post-hardening rescore: 0 changes across 60/62 models
+- 2 models +0.3% from UTF-8 encoding correction in _normalize()
+- 7,069 residual 0.5 rows confirmed as genuine ambiguity (not scorer artifact)
+- Fixture 7 added for encoding regression
+
+**Pre-Step-3.1 Investigation (fabrication gate removal confirmation):**
+- `Fabrication responses under 100 chars: 0` across all 62 CSVs
+- Interpretation: dataset contains no short fabrication responses; the >100-char gate removal was purely defensive (no measurable impact). CONFIRMED.
+
+---
+
+## Session 3 — Step 3.1 (2026-08-31)
+
+**Contamination Resistance: IN PROGRESS**
+
+- canary_guid embedded in metadata for all 100 scenarios ✓
+- 80/20 public/held_out split assigned ✓
+- [CANARY:ipibench-v1-<guid>] string embedded in injected_text: IN PROGRESS
+- scripts/canary_check.py detection tool: IN PROGRESS
+- docs/scenario_refresh_policy.md: IN PROGRESS
+
+---
+
 ## Current Scorer State
 
 - scoring.py version: v3.1 (canonical, single-sourced)
