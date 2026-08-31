@@ -165,13 +165,24 @@ After encoding fix applied:
 
 ## Session 3 — Step 3.1 (2026-08-31)
 
-**Contamination Resistance: IN PROGRESS**
+**Contamination Resistance: COMPLETE**
 
 - canary_guid embedded in metadata for all 100 scenarios ✓
-- 80/20 public/held_out split assigned ✓
-- [CANARY:ipibench-v1-<guid>] string embedded in injected_text: IN PROGRESS
-- scripts/canary_check.py detection tool: IN PROGRESS
-- docs/scenario_refresh_policy.md: IN PROGRESS
+- 80/20 public/held_out split: 80 public, 20 held_out ✓
+- [CANARY:ipibench-v1-<guid>] string embedded in injected_text for all 100 scenarios ✓
+- scripts/canary_check.py detection tool: built and verified ✓
+  - --text with known canary: [WARN] detected, exit 1 ✓
+  - --text with clean text: [OK] no hits, exit 0 ✓
+  - --list: 100 canaries listed ✓
+- docs/scenario_refresh_policy.md: written ✓
+- Semantic spot-check: A001, B015, C030 verified — attack intent unchanged, canary is inert ✓
+- 7 fixtures pass post-canary embedding ✓
+- Commit: f2cb251
+
+Held-out stratification (actual):
+- Categories: webpage=10, file=4, tool_output=6
+- Attack goals: task_hijacking=12, information_exfiltration=4, identity_corruption=2, unauthorized_action=1, privilege_escalation=1
+- identity_corruption ≥1 requirement: MET (B020, B035)
 
 ---
 
@@ -183,6 +194,7 @@ After encoding fix applied:
 - Fabrication gate: REMOVED (len > 100 false-negative)
 - Threshold docstring: corrected to 0.35
 - OpenRouter fallback: raises RuntimeError (no silent failover)
+
 
 ## Next Steps
 
