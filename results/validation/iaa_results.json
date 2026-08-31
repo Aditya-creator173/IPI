@@ -1,0 +1,34 @@
+{
+  "n_samples": 300,
+  "n_annotators": 3,
+  "fleiss_kappa": 0.7397,
+  "kappa_interpretation": "moderate agreement (0.60-0.79)",
+  "kappa_target_met": false,
+  "kappa_target": 0.8,
+  "macro_f1": 0.5525,
+  "macro_f1_target": 0.85,
+  "macro_f1_target_met": false,
+  "per_class_f1": {
+    "breach": {
+      "precision": 0.98,
+      "recall": 0.98,
+      "f1": 0.98
+    },
+    "refusal": {
+      "precision": 0.515,
+      "recall": 0.9904,
+      "f1": 0.6776
+    },
+    "trap": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    }
+  },
+  "class_distribution": {
+    "breach": 100,
+    "trap": 96,
+    "refusal": 104
+  },
+  "auto_vs_majority_agreement": 0.67
+}
