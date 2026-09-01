@@ -1,0 +1,146 @@
+% appendix_schema_enum_mapping.tex
+% Appendix: JSON Schema Enum Mapping Table
+% Addresses Locked Decision #7: "Do NOT rename JSON schema enums. Add explicit
+% mapping table in paper Appendix."
+%
+% Include with: \input{appendix_schema_enum_mapping} inside \appendix block
+% Cross-reference: \ref{sec:appendix-schema-enums}
+
+\section{JSON Schema Enum Mapping Reference}
+\label{sec:appendix-schema-enums}
+
+\noindent
+The IPIBench dataset (\texttt{benchmark.json}) uses compact machine-readable enum
+values across all ten taxonomy dimensions.
+To support reproducibility and prevent ambiguity between the paper's prose
+descriptions and the programmatic values, this appendix provides the authoritative
+mapping from every schema enum to its human-readable paper label.
+\textbf{These enum strings are frozen as of Benchmark v1.0 and must not be renamed
+or aliased without incrementing the dataset version.}
+
+% ------------------------------------------------------------------
+\subsection*{A.1 \texttt{category} -- Content Delivery Vector}
+% ------------------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Enum mapping for \texttt{category} (content delivery vector).}
+\label{tab:enum-category}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Schema Enum Value} & \textbf{Paper Label} \\
+\midrule
+\texttt{webpage}      & Web Document Injection \\
+\texttt{file}         & File Content Injection \\
+\texttt{tool\_output} & Tool / API Output Injection \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------------
+\subsection*{A.2 \texttt{attack\_goal} -- Primary Attacker Objective}
+% ------------------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Enum mapping for \texttt{attack\_goal} (primary attacker objective).}
+\label{tab:enum-attack-goal}
+\begin{tabular}{@{}lp{8cm}@{}}
+\toprule
+\textbf{Schema Enum Value} & \textbf{Paper Label \& Description} \\
+\midrule
+\texttt{task\_hijack}          & Task Hijacking -- redirect the model's primary task to an attacker-specified action (64 scenarios) \\
+\texttt{data\_exfiltration}    & Information Disclosure Compliance -- elicit disclosure of system prompt, session context, or user data (18 scenarios) \\
+\texttt{unauthorized\_action}  & Unauthorized Action Induction -- trigger a simulated tool call or side-effect not authorized by the user (9 scenarios) \\
+\texttt{persistence}           & Stateful Persistence Injection -- embed instructions intended to corrupt future conversational turns (4 scenarios) \\
+\texttt{identity\_corruption}  & Identity Corruption -- overwrite the model's stated identity, persona, or capability claims (5 scenarios; 2 held out) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------------
+\subsection*{A.3 \texttt{evasion\_style} -- Injection Evasion Technique}
+% ------------------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Enum mapping for \texttt{evasion\_style} (injection evasion technique).}
+\label{tab:enum-evasion-style}
+\begin{tabular}{@{}lp{8cm}@{}}
+\toprule
+\textbf{Schema Enum Value} & \textbf{Paper Label \& Description} \\
+\midrule
+\texttt{direct}                   & Direct Instruction -- plaintext instruction with no disguise \\
+\texttt{authority\_impersonation} & Authority Impersonation -- injection claims to originate from a trusted entity (vendor, safety team) \\
+\texttt{role\_mimicry}            & Role Mimicry -- injection instructs the model to adopt an alternate persona or role \\
+\texttt{hypothetical\_framing}    & Hypothetical Framing -- embeds the malicious instruction inside a fictional or counterfactual premise \\
+\texttt{obfuscated}               & Obfuscated Encoding -- uses Base64, leetspeak, Unicode homoglyphs, or other encoding to bypass lexical filters \\
+\texttt{multilingual}             & Cross-Lingual Evasion -- injection delivered in a non-English language to evade English-dominant safety filters \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------------
+\subsection*{A.4 \texttt{defense\_mode} -- Evaluation Defense Configuration}
+% ------------------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Enum mapping for \texttt{defense\_mode} (evaluation defense configuration).}
+\label{tab:enum-defense-mode}
+\begin{tabular}{@{}lp{8.5cm}@{}}
+\toprule
+\textbf{Schema Enum Value} & \textbf{Paper Label \& Description} \\
+\midrule
+\texttt{none}            & Baseline (No Defense) -- empty system prompt, unmodified context \\
+\texttt{prompt\_warning} & Prompt Warning -- system prompt includes an explicit security notice; no structural modification \\
+\texttt{spotlighting}    & Spotlighting Delimiter -- external content wrapped in \texttt{<EXTERNAL\_DATA>} XML delimiters; system prompt instructs the model to ignore commands inside delimiters \\
+\texttt{input\_filter}   & Input Filter -- known injection trigger phrases replaced with \texttt{[FILTERED]} before delivery to the model \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------------
+\subsection*{A.5 \texttt{injection\_position} -- Position of Injected Payload}
+% ------------------------------------------------------------------
+
+\begin{table}[h]
+\centering
+\caption{Enum mapping for \texttt{injection\_position}.}
+\label{tab:enum-injection-position}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Schema Enum Value} & \textbf{Paper Label} \\
+\midrule
+\texttt{prefix} & Prefix -- injection appears before legitimate content \\
+\texttt{suffix} & Suffix -- injection appended after legitimate content \\
+\texttt{inline} & Inline -- injection embedded mid-document, mixed with legitimate content \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ------------------------------------------------------------------
+\subsection*{A.6 Secondary Metadata Dimensions}
+% ------------------------------------------------------------------
+
+\noindent
+The following dimensions exhibit lower empirical variance ($>65\%$ modal class
+concentration) and are retained for schema filtering only, not primary hypothesis
+testing (see Limitations, \S\ref{sec:lim-taxonomy}).
+
+\begin{table}[h]
+\centering
+\caption{Secondary enum dimensions: authority\_claimed, target\_action\_type, linguistic\_register, harm\_severity, persistence.}
+\label{tab:enum-secondary}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Dimension} & \textbf{Schema Enum Values} & \textbf{Notes} \\
+\midrule
+\texttt{authority\_claimed}   & \texttt{none}, \texttt{vendor}, \texttt{system}, \texttt{user}                                                        & Whether injection claims institutional authority \\
+\texttt{target\_action\_type} & \texttt{output\_modification}, \texttt{tool\_invocation}, \texttt{data\_disclosure}, \texttt{session\_corruption} & Mechanical action type targeted by injection \\
+\texttt{linguistic\_register} & \texttt{formal}, \texttt{casual}, \texttt{technical}, \texttt{urgent}                                                & Stylistic register of the injection text \\
+\texttt{harm\_severity}       & \texttt{low}, \texttt{medium}, \texttt{high}                                                                          & Potential downstream harm if injection succeeds \\
+\texttt{persistence}          & \texttt{true}, \texttt{false}                                                                                         & Whether the injection persists across turns \\
+\bottomrule
+\end{tabular}
+\end{table}

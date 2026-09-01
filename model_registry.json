@@ -1,15 +1,20 @@
 {
   "_meta": {
     "project": "IPIBench",
-    "version": "2.0",
-    "last_updated": "2026-07-12",
+    "version": "3.0",
+    "last_updated": "2026-09-01",
     "tier_definitions": {
       "A": "Official lab API or official lab platform. Highest identity confidence. Examples: Google AI Studio (Google), DashScope (Alibaba), xAI API (xAI), NVIDIA NIM for NVIDIA's own models.",
       "B": "Established aggregator or cloud platform with documented lab partnerships. Identity confidence: moderate-high. Examples: GitHub Models (Microsoft Azure OpenAI Service backend), Groq, SambaNova, OpenRouter, NVIDIA NIM (for third-party models).",
       "C": "Trial or promotional third-party provider. Identity is provider-declared, not independently verifiable. Requires verification protocol before paper inclusion. Examples: TokenBay, AeroLink, AgentRouter."
     },
     "verification_protocol": "For every Tier C model, run a 10-prompt verification suite before including results in paper claims. Compare outputs against web UI references (Claude.ai or ChatGPT.com) at zero cost.",
-    "superseded_by": "model_evaluation_matrix.md — treat that file as the current source of truth for model inclusion/exclusion decisions"
+    "superseded_by": "model_evaluation_matrix.md — treat that file as the current source of truth for model inclusion/exclusion decisions",
+    "n_models_finished": 55,
+    "n_clean_evaluations": 22000,
+    "scorer_frozen": "v3.1",
+    "scorer_commit": "567ae02",
+    "canonical_tracking_doc": "LOCAL ONLY/model_eval.md"
   },
   "models": [
     {
@@ -25,7 +30,10 @@
       "env_var": "GROQ_API_KEY",
       "research_role": "OpenAI compact open-weight MoE model (20B total, 3.6B active)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 45.2,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "glm52",
@@ -40,7 +48,10 @@
       "env_var": "NVIDIA_KEY_GLM52",
       "research_role": "Controlled pair UPDATED — GLM generational alignment (5.1 vs 5.2)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-14",
+      "wasr_pct": 20.0,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "deepseek_r1",
@@ -55,7 +66,10 @@
       "env_var": "GITHUB_TOKEN",
       "research_role": "RL-dominant training (multi-stage SFT+GRPO, NOT zero-human-labels — cite arXiv 2501.12948)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 35.5,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "deepseek_v4_pro",
@@ -70,7 +84,10 @@
       "env_var": "NVIDIA_KEY_DEEPSEEK_V4_PRO",
       "research_role": "Controlled pair with R1 — general RLHF vs RL-dominant training",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "wasr_pct": 45.5,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "kimi_k2",
@@ -85,7 +102,8 @@
       "env_var": "NVIDIA_KEY_KIMI_K2",
       "research_role": "Agentic compliance hypothesis — agent-optimized instruction following vs IPI resistance",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "paused_partial_14_rows"
     },
     {
       "model_name": "minimax_m3",
@@ -100,7 +118,10 @@
       "env_var": "NVIDIA_KEY_MINIMAX_M3",
       "research_role": "MiniMax flagship 427B multimodal MoE on NVIDIA NIM",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-10",
+      "wasr_pct": 21.6,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "qwen35_plus",
@@ -115,7 +136,10 @@
       "env_var": "DASHSCOPE_API_KEY",
       "research_role": "Controlled pair BASE — Alibaba generational alignment (3.5 vs 3.7-Max)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-13",
+      "wasr_pct": 23.1,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "qwen37_max",
@@ -130,7 +154,10 @@
       "env_var": "DASHSCOPE_API_KEY",
       "research_role": "Controlled pair UPDATED — Alibaba generational alignment (3.5 vs 3.7-Max)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-14",
+      "wasr_pct": 22.0,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "mistral_large3",
@@ -145,7 +172,10 @@
       "env_var": "NVIDIA_KEY_MISTRAL_LARGE3",
       "research_role": "EU regulatory context; comply-precisely safety philosophy vs Anthropic CAI",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-10",
+      "wasr_pct": 50.0,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "nemotron_ultra",
@@ -160,7 +190,10 @@
       "env_var": "NVIDIA_KEY_NEMOTRON_ULTRA",
       "research_role": "Sequential safety post-training: NVIDIA layers on Meta LLaMA base",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "wasr_pct": 18.9,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "diffusiongemma",
@@ -175,7 +208,10 @@
       "env_var": "NVIDIA_KEY_DIFFUSIONGEMMA",
       "research_role": "Diffusion (non-autoregressive) generation — tests whether IPI requires sequential conditioning",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "wasr_pct": 35.6,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "phi4",
@@ -190,7 +226,8 @@
       "env_var": "GITHUB_TOKEN",
       "research_role": "Synthetic training data hypothesis — only primarily-synthetic-data model in cohort",
       "verification_status": "pending_live_check",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "paused_partial_97_rows"
     },
     {
       "model_name": "gemini35_flash",
@@ -205,7 +242,10 @@
       "env_var": "GOOGLE_API_KEY",
       "research_role": "Google closed flagship — open vs closed comparison within same lab",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-11",
+      "wasr_pct": 16.2,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gemma4_31b",
@@ -220,7 +260,10 @@
       "env_var": "GOOGLE_API_KEY",
       "research_role": "Controlled pair BASE — dense vs MoE (same lab, ~31B)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-11",
+      "wasr_pct": 15.6,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gemma4_26b_moe",
@@ -235,7 +278,10 @@
       "env_var": "GOOGLE_API_KEY",
       "research_role": "Controlled pair UPDATED — dense vs MoE (26B total, 4B active)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-11",
+      "wasr_pct": 15.6,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "cohere_command_a",
@@ -250,7 +296,8 @@
       "env_var": "GITHUB_TOKEN",
       "research_role": "RAG-native deployment context — built for document ingestion, tests compliance-vs-safety tradeoff",
       "verification_status": "pending_live_check",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-10",
+      "evaluation_status": "excluded"
     },
     {
       "model_name": "gpt4o",
@@ -265,7 +312,8 @@
       "env_var": "GITHUB_TOKEN",
       "research_role": "Community-standard OpenAI baseline. Controlled pair BASE with GPT-5.5 — two generations of OpenAI alignment.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "excluded"
     },
     {
       "model_name": "gpt55",
@@ -280,10 +328,15 @@
       "env_var": "AZURE_API_KEY",
       "research_role": "OpenAI current flagship evaluated on Azure UAE North infrastructure",
       "arch": "dense",
-      "axes": [4],
+      "axes": [
+        4
+      ],
       "status": "running",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-12",
+      "wasr_pct": 14.1,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gpt_oss_120b",
@@ -298,7 +351,10 @@
       "env_var": "GROQ_API_KEY",
       "research_role": "Open-weight OpenAI model. Controlled pair with GPT-5.5 — isolates what proprietary closed safety stack adds.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 39.8,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "llama31_8b",
@@ -313,7 +369,10 @@
       "env_var": "GROQ_API_KEY",
       "research_role": "Meta scale ladder STEP 2 (8B). ~14,400 RPD — fastest full run in cohort.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "evaluation_status": "complete",
+      "wasr_pct": 38.4,
+      "n_evaluations": 400
     },
     {
       "model_name": "llama33_70b",
@@ -328,7 +387,10 @@
       "env_var": "GROQ_API_KEY",
       "research_role": "Meta scale ladder STEP 3 (70B). Also 3.1->3.3 generational comparison at 70B scale.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 45.4,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "llama4_scout",
@@ -343,7 +405,10 @@
       "env_var": "GITHUB_TOKEN",
       "research_role": "Meta 3.x dense -> 4.x MoE architectural transition. 10M context extreme injection scenario.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 41.1,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "llama31_405b",
@@ -358,7 +423,8 @@
       "env_var": "SAMBANOVA_API_KEY",
       "research_role": "Meta scale ladder CEILING (405B dense). Controlled pair BASE with Nous Hermes 405B.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "seeking_serverless_tier"
     },
     {
       "model_name": "claude_haiku",
@@ -373,7 +439,8 @@
       "env_var": "AWS_SECRET_ACCESS_KEY / ANTHROPIC_API_KEY",
       "research_role": "CAI scale FLOOR. Anchors Haiku->Sonnet->Opus/Fable capability axis.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "pending_gcp_quota"
     },
     {
       "model_name": "claude_sonnet5",
@@ -388,7 +455,8 @@
       "env_var": "AWS_SECRET_ACCESS_KEY / ANTHROPIC_API_KEY",
       "research_role": "Anthropic mid-tier current flagship. Replaces retired Sonnet 4.6.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "pending_gcp_quota"
     },
     {
       "model_name": "claude_opus",
@@ -403,7 +471,8 @@
       "env_var": "AWS_SECRET_ACCESS_KEY / ANTHROPIC_API_KEY",
       "research_role": "CAI capability CEILING. Haiku->Sonnet->Opus scale ladder completion.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "pending_gcp_quota"
     },
     {
       "model_name": "claude_fable5",
@@ -418,7 +487,8 @@
       "env_var": "AWS_SECRET_ACCESS_KEY / ANTHROPIC_API_KEY",
       "research_role": "Two-layer safety (CAI internal + API-level output classifier). Only dual-layer safety model in any IPI benchmark.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "pending_gcp_quota"
     },
     {
       "model_name": "grok45",
@@ -433,7 +503,8 @@
       "env_var": "XAI_API_KEY",
       "research_role": "Western minimal-safety baseline. NRF-003 and NRF-011 already captured.",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "evaluation_status": "candidate_merge_gateway"
     },
     {
       "model_name": "sarvam_m",
@@ -448,7 +519,8 @@
       "env_var": "NVIDIA_KEY_SARVAM_M",
       "research_role": "Hindi-native language training control condition (multilingual safety comparison, A027 benchmark)",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "excluded"
     },
     {
       "model_name": "qwen36_27b",
@@ -463,7 +535,10 @@
       "env_var": "GROQ_API_KEY",
       "research_role": "Mid-scale dense multilingual anchor",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 26.4,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "groq_compound",
@@ -478,7 +553,10 @@
       "env_var": "GROQ_API_KEY",
       "research_role": "Agentic/Compound system testing (GPT-OSS 120B + Llama 4 Scout compound architecture) via multi-step workflow",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 44.5,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "poolside_laguna_m1",
@@ -493,7 +571,10 @@
       "env_var": "OPENROUTER_API_KEY",
       "research_role": "Code-native objective; text-based IPI vs code-aligned weights",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-13",
+      "wasr_pct": 41.4,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "sarvam_8b_nim",
@@ -508,7 +589,8 @@
       "env_var": "NVIDIA_API_KEY",
       "research_role": "Hindi-native language training control condition on NVIDIA NIM infrastructure",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "excluded"
     },
     {
       "model_name": "gpt56_sol",
@@ -523,7 +605,10 @@
       "env_var": "AZURE_API_KEY",
       "research_role": "OpenAI 5th-generation flagship Sol variant evaluated on Azure UAE North infrastructure",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-12",
+      "wasr_pct": 16.0,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gpt56_terra",
@@ -538,10 +623,15 @@
       "env_var": "AZURE_API_KEY",
       "research_role": "OpenAI 5th-generation flagship Terra variant evaluated on Azure UAE North infrastructure",
       "arch": "dense",
-      "axes": [4],
+      "axes": [
+        4
+      ],
       "status": "running",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-12",
+      "wasr_pct": 17.5,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gpt56_luna",
@@ -556,10 +646,15 @@
       "env_var": "AZURE_API_KEY",
       "research_role": "OpenAI 5th-generation flagship Luna variant evaluated on Azure UAE North infrastructure",
       "arch": "dense",
-      "axes": [4],
+      "axes": [
+        4
+      ],
       "status": "running",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-12",
+      "wasr_pct": 17.8,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gpt54",
@@ -574,10 +669,15 @@
       "env_var": "AZURE_API_KEY",
       "research_role": "OpenAI 5th-generation model evaluated on Azure UAE North infrastructure",
       "arch": "dense",
-      "axes": [4],
+      "axes": [
+        4
+      ],
       "status": "running",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-12",
+      "wasr_pct": 21.2,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "qwen3_30b_instruct",
@@ -592,10 +692,16 @@
       "env_var": "DASHSCOPE_API_KEY",
       "research_role": "Axis 2 same-arch CoT pair BASE (non-reasoning counterpart) & Axis 3 dense control",
       "arch": "dense",
-      "axes": [2, 3],
+      "axes": [
+        2,
+        3
+      ],
       "status": "pending",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-14",
+      "wasr_pct": 51.2,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "qwen3_30b_thinking",
@@ -610,10 +716,16 @@
       "env_var": "DASHSCOPE_API_KEY",
       "research_role": "Axis 2 same-arch CoT pair UPDATED (reasoning counterpart) & Axis 3 dense control",
       "arch": "dense",
-      "axes": [2, 3],
+      "axes": [
+        2,
+        3
+      ],
       "status": "completed",
       "verification_status": "not_required",
-      "evaluation_date": "2026-08-14"
+      "evaluation_date": "2026-08-14",
+      "wasr_pct": 39.1,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gemini37_flash",
@@ -628,10 +740,16 @@
       "env_var": "GOOGLE_API_KEY",
       "research_role": "Google next-generation Flash model for Axis 4 generational comparison (Gemini 3.5 -> 3.6 -> 3.7 Flash)",
       "arch": "dense",
-      "axes": [4, 16],
+      "axes": [
+        4,
+        16
+      ],
       "status": "completed",
       "verification_status": "not_required",
-      "evaluation_date": "2026-08-23"
+      "evaluation_date": "2026-08-23",
+      "wasr_pct": 11.9,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "liquid_lfm25",
@@ -646,10 +764,15 @@
       "env_var": "OPENROUTER_API_KEY",
       "research_role": "Axis 10 Linear Attention / hybrid architecture non-pure-attention evaluation",
       "arch": "hybrid_linear_attention",
-      "axes": [10],
+      "axes": [
+        10
+      ],
       "status": "completed",
       "verification_status": "not_required",
-      "evaluation_date": "2026-08-14"
+      "evaluation_date": "2026-08-14",
+      "wasr_pct": 33.8,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "ibm_granite",
@@ -664,10 +787,15 @@
       "env_var": "CLOUDFLARE_API_TOKEN",
       "research_role": "Axis 10 Mamba-2 / state-space hybrid architecture non-pure-attention evaluation",
       "arch": "mamba2_hybrid",
-      "axes": [10],
+      "axes": [
+        10
+      ],
       "status": "completed",
       "verification_status": "not_required",
-      "evaluation_date": "2026-08-14"
+      "evaluation_date": "2026-08-14",
+      "wasr_pct": 40.0,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "qwen3_30b_moe",
@@ -682,10 +810,16 @@
       "env_var": "CLOUDFLARE_API_TOKEN",
       "research_role": "Axis 3 non-Google MoE replication & Axis 19 sparse active parameter evaluation",
       "arch": "sparse_moe",
-      "axes": [3, 19],
+      "axes": [
+        3,
+        19
+      ],
       "status": "running",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "wasr_pct": 39.4,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "gpt5",
@@ -700,10 +834,16 @@
       "env_var": "AZURE_API_KEY",
       "research_role": "OpenAI 5th-gen flagship anchor & Axis 4/12 frontier baseline",
       "arch": "dense",
-      "axes": [4, 12],
+      "axes": [
+        4,
+        12
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 22.2,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "phi4",
@@ -718,10 +858,13 @@
       "env_var": "AZURE_API_KEY",
       "research_role": "Axis 13 synthetic pre-training hypothesis & SLM architecture comparison",
       "arch": "dense",
-      "axes": [13],
+      "axes": [
+        13
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": null,
+      "evaluation_status": "paused_partial_97_rows"
     },
     {
       "model_name": "grok41fast_reasoning",
@@ -736,10 +879,16 @@
       "env_var": "GCP_SERVICE_ACCOUNT_JSON",
       "research_role": "Axis 2 same-model reasoning pair (Reasoning Subject) & Axis 4 generational update",
       "arch": "dense",
-      "axes": [2, 4],
+      "axes": [
+        2,
+        4
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 20.4,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "grok41fast_nonreasoning",
@@ -754,10 +903,16 @@
       "env_var": "GCP_SERVICE_ACCOUNT_JSON",
       "research_role": "Axis 2 same-model reasoning pair (Non-Reasoning Control) & Axis 4 generational update",
       "arch": "dense",
-      "axes": [2, 4],
+      "axes": [
+        2,
+        4
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 34.2,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "grok420_reasoning",
@@ -772,10 +927,16 @@
       "env_var": "GCP_SERVICE_ACCOUNT_JSON",
       "research_role": "Axis 2 same-model reasoning pair (Reasoning Subject) & Axis 4 generational update",
       "arch": "dense",
-      "axes": [2, 4],
+      "axes": [
+        2,
+        4
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "wasr_pct": 28.0,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "grok420_nonreasoning",
@@ -790,10 +951,16 @@
       "env_var": "GCP_SERVICE_ACCOUNT_JSON",
       "research_role": "Axis 2 same-model reasoning pair (Non-Reasoning Control) & Axis 4 generational update",
       "arch": "dense",
-      "axes": [2, 4],
+      "axes": [
+        2,
+        4
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "wasr_pct": 44.1,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "grok4",
@@ -808,10 +975,15 @@
       "env_var": "AWS_BEARER_TOKEN_BEDROCK",
       "research_role": "Minimal-safety baseline & Axis 4 xAI flagship anchor",
       "arch": "dense",
-      "axes": [4],
+      "axes": [
+        4
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-16",
+      "wasr_pct": 27.8,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     },
     {
       "model_name": "deepseek_r1",
@@ -826,10 +998,17 @@
       "env_var": "AWS_ACCESS_KEY_ID",
       "research_role": "Axis 2 Chain-of-Thought Reasoning Subject & Axis 4 DeepSeek flagship",
       "arch": "sparse_moe",
-      "axes": [2, 4, 14],
+      "axes": [
+        2,
+        4,
+        14
+      ],
       "status": "ready",
       "verification_status": "not_required",
-      "evaluation_date": null
+      "evaluation_date": "2026-08-15",
+      "wasr_pct": 35.5,
+      "n_evaluations": 400,
+      "evaluation_status": "complete"
     }
   ],
   "retired": [

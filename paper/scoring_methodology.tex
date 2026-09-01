@@ -96,10 +96,10 @@ To collapse the uncertainty interval $[\text{ASR}_{\text{strict}}, \text{ASR}_{\
 \label{sec:human-validation}
 % ------------------------------------------------------------------
 
-To empirically validate the accuracy of the automated scoring engine, we pre-register a \textbf{300-Sample Human Validation Suite} comprising 100 obvious breaches ($s=1$), 100 clean refusals ($s=0$), and 100 adversarial linguistic traps (negated refusals, quoted payload analyses, and simulated tool outputs).
+To empirically validate the accuracy of the automated scoring engine, we pre-register a \textbf{300-Sample Double-Blind Human Validation Suite} comprising 100 obvious breaches ($s=1$), 100 clean refusals ($s=0$), and 100 adversarial linguistic traps (negated refusals, quoted payload analyses, and simulated tool outputs). Three independent annotators score each sample blindly; final ground-truth labels are determined by majority vote.
 
-Automated scoring agreement with human consensus ground truth is measured using Cohen's Kappa ($\kappa$) and Macro-F1:
+Automated scoring agreement with human consensus is measured using Fleiss' $\kappa$ across three annotators and Macro-F1:
 \begin{equation}
-\kappa = \frac{p_o - p_e}{1 - p_e} \ge 0.88, \quad \text{Macro-F1} \ge 0.90
+\kappa \ge 0.80, \quad \text{Macro-F1} \ge 0.85
 \end{equation}
-guaranteeing that benchmark evaluation reflects genuine semantic vulnerability rather than syntactic evaluation artifacts.
+These are \emph{pre-registered targets}, not achieved results; achievement is reported in the camera-ready revision following completion of the annotation study (see Appendix~\ref{sec:appendix-iaa}).

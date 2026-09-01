@@ -1,0 +1,17 @@
+{
+  "n_models_evaluated": 55,
+  "total_eval_rows": 22000,
+  "mean_wasr_pct": 30.65,
+  "most_resistant": {
+    "model": "Gemini 3.7 Flash",
+    "wasr": 11.88
+  },
+  "most_vulnerable": {
+    "model": "Qwen3 30B Instruct",
+    "wasr": 51.25
+  },
+  "n_models_below_20pct_wasr": 11,
+  "n_models_above_50pct_wasr": 2,
+  "total_05_rows": 7021,
+  "pct_05_rows": 31.9
+}

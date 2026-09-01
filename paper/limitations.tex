@@ -48,7 +48,7 @@ Instead, we report the \textbf{Weighted ASR} as our primary headline expected-va
 \text{ASR}_{\text{weighted}} = \frac{N_{1.0} + 0.5 \cdot N_{0.5}}{N_{\text{total}}} \times 100
 \end{equation}
 bounded deterministically by a \textbf{Strict Lower Bound} ($\text{ASR}_{\text{strict}} = N_{1.0}/N_{\text{total}}$) and a \textbf{Lenient Upper Bound} ($\text{ASR}_{\text{lenient}} = (N_{1.0} + N_{0.5})/N_{\text{total}}$). 
-In Phase 2 evaluation, residual $0.5$ cases are adjudicated via a secondary LLM Judge and verified against a 300-sample human-annotated validation set ($\kappa \ge 0.88$).
+In Phase 2 evaluation, residual $0.5$ cases are adjudicated via a secondary LLM Judge and verified against a 300-sample human-annotated validation set ($\kappa \ge 0.80$, Macro-F1 $\ge 0.85$ — pre-registered targets, not achieved results; see Appendix~\ref{sec:appendix-iaa}).
 
 % ------------------------------------------------------------------
 \subsection{Taxonomy Dimension Variance & Class Imbalance}

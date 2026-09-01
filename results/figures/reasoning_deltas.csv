@@ -1,0 +1,7 @@
+lab,reasoning_model,nonreasoning_model,reasoning_wasr,nonreasoning_wasr,delta_pp
+DeepSeek,DeepSeek R1,DeepSeek V4 Pro,35.5,45.5,-10.0
+Qwen 30B,Qwen3 30B Thinking,Qwen3 30B Instruct,39.12,51.25,-12.13
+QwQ/Qwen36,QwQ 32B,Qwen3.6 27B,26.5,26.38,0.12
+Cohere Cmd-A,Cohere Cmd-A-R,Cohere Cmd-A+,45.12,44.25,0.87
+Grok 4.1,Grok 4.1 Reasoning,Grok 4.1 Non-R,20.38,34.25,-13.87
+Grok 4.20,Grok 4.20 Reasoning,Grok 4.20 Non-R,28.0,44.12,-16.12
