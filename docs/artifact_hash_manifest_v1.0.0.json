@@ -1,0 +1,60 @@
+{
+  "_meta": {
+    "version": "v1.0.0",
+    "generated_at": "2026-09-01T20:44:00+05:30",
+    "purpose": "Frozen artifact hash manifest for IPIBench v1.0.0 release tag",
+    "scorer_frozen": "v3.1",
+    "fixtures_passing": 7,
+    "n_models": 55,
+    "n_clean_evaluations": 22000,
+    "git_head": "65af44f6370ef22d24d1b3509cbae04e5ed6621c",
+    "git_branch": "main"
+  },
+  "artifacts": {
+    "benchmark_scripts/scoring.py": {
+      "md5": "cc4d54578d160cfd687a3dfc8cd96fc5",
+      "sha256": "e740c308d8b1ac054c0feb7acc23565b5a8a5b07f73de53b09f8861c2a8a023a",
+      "size_bytes": 17070
+    },
+    "benchmark_scripts/llm_judge.py": {
+      "md5": "12e31cb81f9d66c42cd273a5e4a7a968",
+      "sha256": "8b5b92bb04e27c7202c154648d1173ef53095b6ca9da1b8fe122a2341c11cc00",
+      "size_bytes": 8689
+    },
+    "benchmark_scripts/_core.py": {
+      "md5": "deffd4252377a5df81bd8b377d58cfd0",
+      "sha256": "b6a27a46d884f5374b85b0f34ae12e717f1688a125cb7f6434543d796b50e950",
+      "size_bytes": 25082
+    },
+    "benchmark.json": {
+      "md5": "6e7b8a1975c130149a7ffccb952f55de",
+      "sha256": "60c7d6564e735383a32a49c8d749d7cb0c8dbba078f039b564f3ec9d0291ad49",
+      "size_bytes": 194347
+    },
+    "test_scoring_fixtures.py": {
+      "md5": "1aa8eedef7cb30d7fc077a4695dec989",
+      "sha256": "fd347116d4415611592f15996dbecca78f8b9b2cfe52089ca3514c63799163cd",
+      "size_bytes": 9336
+    },
+    "model_registry.json": {
+      "md5": "ac34e0cb85b42baed1c049a6cf8aade6",
+      "sha256": "eca76fd498d3a759288b0356ac5bbdf49556c604371c6660f145d3661ca47f98",
+      "size_bytes": 37519
+    },
+    "requirements.txt": {
+      "md5": "e23c6f133afe0ea86494bb2831b1b0ca",
+      "sha256": "10001f179d9ada8870460ce2215ec8a620aba5b2807d9b9d3ff801b841a49455",
+      "size_bytes": 313
+    },
+    "results/figures/model_ranking.csv": {
+      "md5": "7f6dbf8359c15895ccf5c63d1dfa0114",
+      "sha256": "ac108539485cf875b0aa213685ebef608c408bd5728d8fae1e7be360112ca0d7",
+      "size_bytes": 2733
+    },
+    "results/figures/summary_stats.json": {
+      "md5": "3441802b87720f350b57cb3dd9947345",
+      "sha256": "19c101cea6589b60ac31864078c6c4cbbb802f0fecd7edbf5bc2c70bbc768310",
+      "size_bytes": 376
+    }
+  }
+}
